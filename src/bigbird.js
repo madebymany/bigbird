@@ -39,7 +39,7 @@
 
       this.common = this.application.Common || null;
 
-      $(this.body).ready(_.bind(this.onDomReady, this));
+      $(document.body).ready(_.bind(this.onDomReady, this));
     },
 
     onDomReady: function() {
