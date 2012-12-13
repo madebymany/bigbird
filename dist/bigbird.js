@@ -22,17 +22,27 @@
     Used for DOM ready execution of the application passed to it.
   */
 
-  var Initializer = BigBird.Initializer = function(application){
-    this.application = application;
-    this.initialize();
+  var InitializerDefaults = {
+    base: $(document.body),
+    module: "data-module",
+    action: "data-action",
+    modules: {}
+  };
+
+  var Initializer = BigBird.Initializer = function(options){
+    this.options = _.extend({}, InitializerDefaults, options || {});
+
+    this.initialize.apply(this, arguments);
   };
 
   _.extend(Initializer.prototype, {
 
     initialize: function(){
-      this.body = document.body;
-      this.module = this.body.getAttribute('data-module');
-      this.action = this.body.getAttribute('data-action');
+      this.base = this.options.base;
+      this.module = this.base.attr(this.options.module);
+      this.action = this.base.attr(this.options.action);
+      this.application = this.options.modules;
+
       this.common = this.application.Common || null;
 
       $(this.body).ready(_.bind(this.onDomReady, this));
