@@ -59,4 +59,8 @@ You make think, why the hell have they written another JS framework? Well, techn
 
 We've grown this out of what we've built on projects such as ITV News and Sport and have found that we often repeat the same patterns in our application development.
 
+## License
 
+BigBird is released under the MIT license:
+
+www.opensource.org/licenses/MIT
