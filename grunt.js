@@ -15,9 +15,9 @@ module.exports = function(grunt) {
     },
 
     'jasmine' : {
-      src : ['public/javascripts/*.js', 'dist/sir-trevor.js'],
+      src : ['public/javascripts/*.js', 'dist/bigbird.js'],
       specs : 'spec/**/*.spec.js',
-      helpers : 'spec/helpers/*.js',
+      helpers : 'spec/javascripts/helpers/*.js',
       timeout : 10000,
       phantomjs : {
         'ignore-ssl-errors' : true
