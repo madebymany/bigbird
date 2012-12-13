@@ -37,6 +37,18 @@ new BigBird.Initializer({ modules: Modules });
 
 And when the ``<body>`` tag contains the ``data-module="Pages"`` and ``data-action="index"`` then the ``Pages.index`` method will be called, along with the ``Pages.initialize`` function. 
 
+In addition, you can also have 'generic' helper functions that get called on *every* request. These are defined in a ``Common`` module, as below:
+
+```javascript
+...
+Modules.Common = {
+  initialize: {
+    console.log('Called on every page view');
+  }
+};
+...
+```
+
 ## Where does this fit?
 
 Big Bird ties in really well with an MVC framework like Rails. All you'll have to do is output your controller name and action onto the body tag with the data attributes ``data-module`` and ``data-action`` and you're good to go!
