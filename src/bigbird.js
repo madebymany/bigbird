@@ -1,7 +1,5 @@
 (function($, _) {
-
-  var root = this, BigBird;
-  BigBird = root.BigBird = {}; 
+  var BigBird = window.BigBird = {};
 
   /* jQuery Tiny Pub/Sub - v0.7 - 10/27/2011
    * http://benalman.com/
