@@ -57,7 +57,7 @@ Big Bird ties in really well with an MVC framework like Rails. All you'll have t
 
 ## Motivations
 
-You make think, why the hell have they written another JS framework? Well, technically this isn't a framework at all. All we're trying to provide is a really simple base that will get out of your way and give you some sensible defaults on your projects. 
+You may think, why the hell have they written another JS framework? Well, technically this isn't a framework at all. All we're trying to provide is a really simple base that will get out of your way and give you some sensible defaults on your projects. 
 
 We've grown this out of what we've built on projects such as ITV News and Sport and have found that we often repeat the same patterns in our application development.
 
