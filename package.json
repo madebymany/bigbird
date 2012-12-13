@@ -1,0 +1,12 @@
+{
+  "name": "BigBird",
+  "version": "0.1.0",
+  "dependencies": {
+    "grunt": "*",
+    "grunt-rigger": "*",
+    "grunt-jasmine-runner": "*"
+  },
+  "scripts": {
+  	"test": "grunt travis --verbose"
+  }
+}

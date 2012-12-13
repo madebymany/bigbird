@@ -1,0 +1,44 @@
+<html>
+  <head>
+    <title>Big Bird Test</title>
+  </head>
+  <body data-module="Test" data-action="index">
+    <div id="element"></div>
+
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+    <script type="text/javascript" src="underscore.1.4.3.min.js"></script>
+    <script type="text/javascript" src="../src/bigbird.js"></script>
+    <script type="text/javascript">
+
+    var TestApp = TestApp || {}; 
+    TestApp.Modules = TestApp.Modules || {};
+
+    TestApp.Modules.Common = {
+      initialize: function(){
+        console.log('Common called');
+      }
+    };
+
+    TestApp.Modules.Test = {
+      initialize: function(){
+        console.log('Init on test called');
+      },
+      index: function(){
+        new BBController();
+        console.log('Index on test called');
+      }
+    };
+
+    var BBController = BigBird.Controller.extend({
+      el: "#element",
+
+      initialize: function() {
+        console.log('Controller yo!');
+      }
+    });
+
+    new BigBird.Initializer(TestApp.Modules);
+
+    </script>
+  </body>  
+</html>
