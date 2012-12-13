@@ -1,17 +1,14 @@
 (function($, _) {
-  var root = this;
-  var BigBird = root.BigBird = {}; 
-
-  BigBird.$ = $;
+  var BigBird = window.BigBird = {};
 
   /* jQuery Tiny Pub/Sub - v0.7 - 10/27/2011
    * http://benalman.com/
    * Copyright (c) 2011 "Cowboy" Ben Alman; Licensed MIT, GPL */
 
-  var o = BigBird.$({});
-  BigBird.$.subscribe = function() { o.on.apply(o, arguments); };
-  BigBird.$.unsubscribe = function() { o.off.apply(o, arguments); };
-  BigBird.$.publish = function() { o.trigger.apply(o, arguments); };
+  var o = $({});
+  $.subscribe = function() { o.on.apply(o, arguments); };
+  $.unsubscribe = function() { o.off.apply(o, arguments); };
+  $.publish = function() { o.trigger.apply(o, arguments); };
 
   /*
     BigBird Initializer
@@ -92,8 +89,8 @@
       return this.$el.find(selector);
     },
 
-    publish : BigBird.$.publish,
-    subscribe : BigBird.$.subscribe,
+    publish : $.publish,
+    subscribe : $.subscribe,
 
     initialize: function() {},
 
@@ -109,10 +106,12 @@
       for (len; len--;) {
         var methodName = this.proxied[len];
         if (_.isFunction(this[methodName])) {
-          _.bind(this[methodName], this);
+          this[methodName] = _.bind(this[methodName], this);
         }
       }
     },
+
+    eventSplitter: /^(\S+)\s*(.*)$/,
 
     delegateEvents: function() {
       for (var key in this.events) {
@@ -133,7 +132,7 @@
     _setElement: function() {
       if (_.isUndefined(this.el)) { return false; }
 
-      this.$el = this.el instanceof BigBird.$ ? this.el : BigBird.$(this.el);
+      this.$el = this.el instanceof $ ? this.el : $(this.el);
       this.el = this.$el[0];
       this.data = this.$el.data();
     },
