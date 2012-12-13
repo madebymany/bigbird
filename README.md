@@ -1,5 +1,7 @@
 # Big Bird 
 
+[![Build Status](https://travis-ci.org/madebymany/bigbird.png?branch=master)](https://travis-ci.org/madebymany/bigbird/)
+
 A stripped back JS framework built out of sensible patterns used here at Made By Many. Out of the box we include:
 
 1. Paul Irish's DOM Ready Execution, wrapped up in a delightful package.
