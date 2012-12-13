@@ -1,3 +1,6 @@
+// Big Bird
+// v0.1.0
+// by @cjbell88, @ninjabiscuit & @callumj_
 (function($, _) {
   var root = this;
   var BigBird = root.BigBird = {}; 
