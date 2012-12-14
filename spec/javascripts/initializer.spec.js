@@ -43,4 +43,21 @@ describe("BigBird.Initializer", function() {
     expect(b.action).toBe("index");
   });
 
+  it("Can rerun an action after initialisation", function() {
+    var base = $("<div data-module='Test' data-action='index' />");
+
+    var o = {
+      'Test': {
+        index: function() {}
+      }
+    };
+
+    spyOn(o.Test, 'index');
+
+    var b = new BigBird.Initializer({ base: base, modules: o });
+    b.rerunAction();
+
+    expect(o.Test.index.callCount).toEqual(2);
+  });
+
 });

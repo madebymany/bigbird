@@ -42,10 +42,10 @@
 
       this.common = this.application.Common || null;
 
-      $(document.body).ready(_.bind(this.onDomReady, this));
+      $(document.body).ready(_.bind(this.setup, this));
     },
 
-    onDomReady: function() {
+    setup: function() {
       // Common module execution if it exists
       if (!_.isNull(this.common)) {
         this.execute("Common", "initialize");
@@ -54,6 +54,10 @@
       // Module execution
       this.execute(this.module, "initialize");
       this.execute(this.module, this.action);
+    },
+
+    rerunAction: function() {
+      return this.execute(this.module, this.action);
     },
 
     execute: function(module, action) {
