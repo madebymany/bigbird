@@ -40,18 +40,19 @@
       this.action = this.base.attr(this.options.action);
       this.application = this.options.modules;
 
-      this.common = this.application.Common || null;
+      if (_.isUndefined(this.module) || _.isUndefined(this.action) || _.isUndefined(this.application)) {
+        return false;
+      }
+
+      if (this.module) { this.module = this.module.toLowerCase(); }
+      if (this.action) { this.action = this.action.toLowerCase(); }
 
       $(document.body).ready(_.bind(this.setup, this));
     },
 
     setup: function() {
       // Common module execution if it exists
-      if (!_.isNull(this.common)) {
-        this.execute("Common", "initialize");
-      }
-
-      // Module execution
+      this.execute("common", "initialize");
       this.execute(this.module, "initialize");
       this.execute(this.module, this.action);
     },
@@ -62,13 +63,26 @@
 
     execute: function(module, action) {
       // Check existence of module
-      module = this.application[module];
+      module = this.getModule(module);
       if (_.isUndefined(module)) { return false; }
 
       // Check existence of action on module
       if (_.isUndefined(module[action]) || !_.isFunction(module[action])) { return false; }
 
       module[action].apply();
+    },
+
+    getModule: function(moduleName) {
+      if (_.has(this.application, moduleName)) {
+        return this.application[moduleName];
+      }
+
+      moduleName = capitaliseFirstLetter(moduleName);
+      if (_.has(this.application, moduleName)) {
+        return this.application[moduleName];
+      }
+
+      return undefined;
     }
 
   });
@@ -185,6 +199,11 @@
 
     return child;
   };
+
+  function capitaliseFirstLetter(string)
+  {
+      return string.charAt(0).toUpperCase() + string.slice(1);
+  }
 
   Controller.extend = extend;
 
