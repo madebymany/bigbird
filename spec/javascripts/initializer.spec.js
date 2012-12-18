@@ -4,7 +4,11 @@ describe("BigBird.Initializer", function() {
     var base = $("<div data-module='test' data-action='index' />");
 
     var o = {
-      'Test' : { initialize: function() {} }
+      'Test' : {
+        initialize: function() {
+          return true;
+        }
+      }
     };
 
     var b = new BigBird.Initializer({ base: base, modules: o });
