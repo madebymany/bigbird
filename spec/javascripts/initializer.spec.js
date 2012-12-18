@@ -14,7 +14,7 @@ describe("BigBird.Initializer", function() {
     expect(b.execute("Common", "initialize")).toBe(false);
   });
 
-  it("Should execute the requested action on the module specified", function(){
+  it("Should execute the requested action on the module specified as well as the initialize function", function(){
     var base = $("<div data-module='test' data-action='index' />");
 
     var o = {
@@ -26,8 +26,8 @@ describe("BigBird.Initializer", function() {
 
     var b = new BigBird.Initializer({ base: base, modules: o });
 
-    expect(o.Test.initialize.callCount).toEqual(1);
-    expect(o.Test.index.callCount).toEqual(1);
+    expect(o.Test.initialize).toHaveBeenCalled();
+    expect(o.Test.index).toHaveBeenCalled();
   });
 
   it("Should find the common object and execute it on DOMready", function() {
@@ -45,7 +45,7 @@ describe("BigBird.Initializer", function() {
     spyOn(o.Common, 'initialize');
 
     var b = new BigBird.Initializer({ base: base, modules: o });
-    expect(o.Common.initialize.callCount).toEqual(1);
+    expect(o.Common.initialize).toHaveBeenCalled();
   });
 
   it("Should gracefully fail trying to call execute on functions that don't exist", function(){
