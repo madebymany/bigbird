@@ -11,9 +11,11 @@ describe("BigBird.Initializer", function() {
       }
     };
 
+    spyOn(o.Test, 'initialize');
+
     var b = new BigBird.Initializer({ base: base, modules: o });
 
-    expect(b.execute("Test", "initialize")).not.toBeFalsy();
+    expect(o.Test.initialize).toHaveBeenCalled();
     expect(b.execute("Test", "index")).toBeFalsy();
     expect(b.execute("Common", "initialize")).toBeFalsy();
   });
