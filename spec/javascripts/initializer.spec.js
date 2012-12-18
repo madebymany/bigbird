@@ -9,9 +9,9 @@ describe("BigBird.Initializer", function() {
 
     var b = new BigBird.Initializer({ base: base, modules: o });
 
-    expect(b.execute("Test", "initialize")).not.toBe(false);
-    expect(b.execute("Test", "index")).toBe(false);
-    expect(b.execute("Common", "initialize")).toBe(false);
+    expect(b.execute("Test", "initialize")).not.toBeFalsy();
+    expect(b.execute("Test", "index")).toBeFalsy();
+    expect(b.execute("Common", "initialize")).toBeFalsy();
   });
 
   it("Should execute the requested action on the module specified as well as the initialize function", function(){
@@ -51,7 +51,7 @@ describe("BigBird.Initializer", function() {
   it("Should gracefully fail trying to call execute on functions that don't exist", function(){
     var o = {};
     var b = new BigBird.Initializer({ modules: o });
-    expect(b.execute("Common", "initialize")).toBe(false);
+    expect(b.execute("Common", "initialize")).toBeFalsy();
   });
 
   it("Should find the module and action based on what's available on the base tag provided", function() {
@@ -91,8 +91,8 @@ describe("BigBird.Initializer", function() {
     var b = new BigBird.Initializer({ base: base, modules: o });
 
     expect(b.module).toBe("test");
-    expect(b.getModule("Test")).not.toBe(undefined);
-    expect(b.getModule("test")).not.toBe(undefined);
+    expect(b.getModule("Test")).toBeDefined();
+    expect(b.getModule("test")).toBeDefined();
   });
 
 });
