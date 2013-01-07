@@ -1,23 +1,8 @@
 describe("BigBird.Controller", function() {
-  
-  it("should set the element, both as a jquery object and a plain dom object", function(){
-    var element = $("<div id='el'></div>");
-
-    var c = BigBird.Controller.extend({
-      el: element
-    });
-
-    c = new c();
-
-    expect(c.$el).toBe(jQuery);
-    expect(c.el[0]).not.toBeNull();
-    expect(c.$el.attr('id')).toEqual(c.el.id);
-  });
 
   it("should should set any options as variables on the controller object", function(){
-    var element = $("<div id='el'></div>");
 
-    var c = BigBird.Controller.extend({ el: element });
+    var c = BigBird.Controller.extend();
     c = new c({ test: true });
 
     expect(c.test).toBe(true);
@@ -67,30 +52,10 @@ describe("BigBird.Controller", function() {
     c = new c();
 
     expect(c.i).toBe(0);
-  
+
     element.click();
 
     expect(c.i).toBe(1);
   });
 
-  it("should allow me to bind events to functions and have them executed when being called", function(){
-    var element = $("<div id='el'><a href='#' class='btn'></a></div>");
-
-    var c = BigBird.Controller.extend({
-      el: element,
-      i: 0,
-      events: { "click": "test", "click .btn": "testBtn" },
-      test: function() { this.i = 1; },
-      testBtn: function() { this.i = 2; return false; }
-    });
-    c = new c();
-
-    expect(c.i).toBe(0);
-  
-    element.click();
-    expect(c.i).toBe(1);
-
-    element.find('.btn').click();
-    expect(c.i).toBe(2);
-  });
 });

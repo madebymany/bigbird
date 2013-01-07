@@ -85,27 +85,12 @@
   });
 
   /*
-    BigBird Controller
+    BigBird Base
     -
-    Rewrite of Andy Walker's (@ninjabiscuit) controller into more of a backbone / underscore style
+    Controller and View inherit from this
   */
 
-  var Controller = BigBird.Controller = function(options){
-    this._setElement();
-    this._setOptions(options || {});
-
-    if (this.subscriptions) { this.subscribeToEvents(); }
-    if (this.proxied) { this.proxyFunctions(); }
-    if (this.events) { this.delegateEvents(); }
-
-    this.initialize.apply(this, arguments);
-  };
-
-  _.extend(Controller.prototype, {
-
-    $: function(selector) {
-      return this.$el.find(selector);
-    },
+  var Base = {
 
     publish : $.publish,
     subscribe : $.subscribe,
@@ -119,6 +104,35 @@
       }
     },
 
+    eventSplitter: /^(\S+)\s*(.*)$/,
+
+    _setOptions: function(options) {
+      this.options = options;
+
+      for (var key in this.options) {
+        this[key] = this.options[key];
+      }
+    }
+  };
+
+  /*
+    BigBird Controller
+    -
+    Rewrite of Andy Walker's (@ninjabiscuit) controller into more of a backbone / underscore style
+  */
+
+  var Controller = BigBird.Controller = function(options){
+
+    this._setOptions(options || {});
+
+    if (this.subscriptions) { this.subscribeToEvents(); }
+    if (this.proxied) { this.proxyFunctions(); }
+
+    this.initialize.apply(this, arguments);
+  };
+
+  _.extend(Controller.prototype, Base, {
+
     proxyFunctions: function() {
       var len = this.proxied.length;
       for (len; len--;) {
@@ -127,9 +141,32 @@
           this[methodName] = _.bind(this[methodName], this);
         }
       }
-    },
+    }
 
-    eventSplitter: /^(\S+)\s*(.*)$/,
+  });
+
+  /*
+    BigBird View
+    -
+  */
+
+  var View = BigBird.View = function(options){
+
+    this._setElement();
+    this._setOptions(options || {});
+
+    if (this.subscriptions) { this.subscribeToEvents(); }
+    if (this.events) { this.delegateEvents(); }
+
+    this.initialize.apply(this, arguments);
+
+  };
+
+  _.extend(View.prototype, Base, {
+
+    $: function(selector) {
+      return this.$el.find(selector);
+    },
 
     delegateEvents: function() {
       for (var key in this.events) {
@@ -153,16 +190,10 @@
       this.$el = this.el instanceof $ ? this.el : $(this.el);
       this.el = this.$el[0];
       this.data = this.$el.data();
-    },
-
-    _setOptions: function(options) {
-      this.options = options;
-
-      for (var key in this.options) {
-        this[key] = this.options[key];
-      }
     }
+
   });
+
 
   var extend = function(protoProps, staticProps) {
     var parent = this;
@@ -202,6 +233,6 @@
       return string.charAt(0).toUpperCase() + string.slice(1);
   }
 
-  Controller.extend = extend;
+  View.extend = Controller.extend = extend;
 
 })(jQuery, _);
