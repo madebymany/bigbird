@@ -1,4 +1,4 @@
-(function($, _) {
+(function($) {
   var BigBird = window.BigBird = {};
 
   /* jQuery Tiny Pub/Sub - v0.7 - 10/27/2011
@@ -24,12 +24,12 @@
   };
 
   var Initializer = BigBird.Initializer = function(options){
-    this.options = _.extend({}, InitializerDefaults, options || {});
+    this.options = $.extend({}, InitializerDefaults, options || {});
 
     this.initialize.apply(this, arguments);
   };
 
-  _.extend(Initializer.prototype, {
+  $.extend(Initializer.prototype, {
 
     initialize: function(){
       this.base = this.options.base;
@@ -37,14 +37,14 @@
       this.action = this.base.attr(this.options.action);
       this.application = this.options.modules;
 
-      if (_.isUndefined(this.module) || _.isUndefined(this.action) || _.isUndefined(this.application)) {
+      if (this.module == null || this.action == null || this.application == null) {
         return false;
       }
 
       if (this.module) { this.module = this.module.toLowerCase(); }
       if (this.action) { this.action = this.action.toLowerCase(); }
 
-      $(document.body).ready(_.bind(this.setup, this));
+      $(document.body).ready($.proxy(this.setup, this));
     },
 
     setup: function() {
@@ -61,21 +61,21 @@
     execute: function(module, action) {
       // Check existence of module
       module = this.getModule(module);
-      if (_.isUndefined(module)) { return false; }
+      if (module == null) { return false; }
 
       // Check existence of action on module
-      if (_.isUndefined(module[action]) || !_.isFunction(module[action])) { return false; }
+      if (module[action] == null || typeof module[action] !== "function") { return false; }
 
       module[action].apply();
     },
 
     getModule: function(moduleName) {
-      if (_.has(this.application, moduleName)) {
+      if (this.application.hasOwnProperty(moduleName)) {
         return this.application[moduleName];
       }
 
       moduleName = capitaliseFirstLetter(moduleName);
-      if (_.has(this.application, moduleName)) {
+      if (this.application.hasOwnProperty(moduleName)) {
         return this.application[moduleName];
       }
 
@@ -100,7 +100,7 @@
     subscribeToEvents: function() {
       for (var key in this.subscriptions) {
         var methodName = this.subscriptions[key];
-        this.subscribe(key, _.bind(this[methodName], this));
+        this.subscribe(key, $.proxy(this[methodName], this));
       }
     },
 
@@ -131,14 +131,14 @@
     this.initialize.apply(this, arguments);
   };
 
-  _.extend(Controller.prototype, Base, {
+  $.extend(Controller.prototype, Base, {
 
     proxyFunctions: function() {
       var len = this.proxied.length;
       for (len; len--;) {
         var methodName = this.proxied[len];
-        if (_.isFunction(this[methodName])) {
-          this[methodName] = _.bind(this[methodName], this);
+        if (typeof this[methodName] === "function") {
+          this[methodName] = $.bind(this[methodName], this);
         }
       }
     }
@@ -162,7 +162,7 @@
 
   };
 
-  _.extend(View.prototype, Base, {
+  $.extend(View.prototype, Base, {
 
     $: function(selector) {
       return this.$el.find(selector);
@@ -171,7 +171,7 @@
     delegateEvents: function() {
       for (var key in this.events) {
         var methodName = this.events[key];
-        var method     = _.bind(this[methodName], this);
+        var method     = $.proxy(this[methodName], this);
 
         var match      = key.match(this.eventSplitter);
         var eventName  = match[1], selector = match[2];
@@ -185,7 +185,7 @@
     },
 
     _setElement: function() {
-      if (_.isUndefined(this.el)) { return false; }
+      if (this.el == null) { return false; }
 
       this.$el = this.el instanceof $ ? this.el : $(this.el);
       this.el = this.$el[0];
@@ -202,14 +202,14 @@
     // The constructor function for the new subclass is either defined by you
     // (the "constructor" property in your `extend` definition), or defaulted
     // by us to simply call the parent's constructor.
-    if (protoProps && _.has(protoProps, 'constructor')) {
+    if (protoProps && protoProps.hasOwnProperty('constructor')) {
       child = protoProps.constructor;
     } else {
       child = function(){ parent.apply(this, arguments); };
     }
 
     // Add static properties to the constructor function, if supplied.
-    _.extend(child, parent, staticProps);
+    $.extend(child, parent, staticProps);
 
     // Set the prototype chain to inherit from `parent`, without calling
     // `parent`'s constructor function.
@@ -219,7 +219,7 @@
 
     // Add prototype properties (instance properties) to the subclass,
     // if supplied.
-    if (protoProps) { _.extend(child.prototype, protoProps); }
+    if (protoProps) { $.extend(child.prototype, protoProps); }
 
     // Set a convenience property in case the parent's prototype is needed
     // later.
@@ -235,4 +235,4 @@
 
   View.extend = Controller.extend = extend;
 
-})(jQuery, _);
+})(jQuery);
