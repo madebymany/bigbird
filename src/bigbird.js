@@ -138,7 +138,7 @@
       for (len; len--;) {
         var methodName = this.proxied[len];
         if (typeof this[methodName] === "function") {
-          this[methodName] = $.bind(this[methodName], this);
+          this[methodName] = $.proxy(this[methodName], this);
         }
       }
     }
