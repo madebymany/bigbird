@@ -136,6 +136,10 @@
 
   $.extend(Controller.prototype, Base, {
 
+    stateful: function(collection, state_machine){
+      return (state_machine) ? state_machine.addCollection(collection) : new BigBird.StateMachine(collection);
+    },
+
     proxyFunctions: function() {
       var len = this.proxied.length;
       for (len; len--;) {
@@ -152,8 +156,12 @@
     BigBird Simple State Machine
   */
 
-  BigBird.StateMachine = function(){
+  BigBird.StateMachine = function(collection){
     this.o = $({});
+
+    if (collection) {
+      this.addCollection(collection);
+    }
   };
 
   BigBird.StateMachine.prototype = {
@@ -165,24 +173,19 @@
       this.o.bind.apply( this.o, arguments );
     },
 
+    addCollection: function(items) {
+      $.each(items, $.proxy(function(item){
+        this.add(item);
+      }, this));
+    },
+
     add: function(item) {
       this.subscribe("change", function(e, current_item){
         return (current_item === item) ? item.activate() : item.deactivate();
       });
+
       item.active = $.proxy(function(){ this.publish("change", item); }, this);
     }
-  };
-
-  $.fn.activate = function(){
-    return this.each(function() {
-      $(this).addClass('active');
-    });
-  };
-
-  $.fn.deactivate = function(){
-    return this.each(function() {
-      $(this).removeClass('active');
-    });
   };
 
   /*
@@ -220,6 +223,14 @@
           this.$el.delegate(selector, eventName, method);
         }
       }
+    },
+
+    activate: function(){
+      this.$el.addClass("active");
+    },
+
+    deactivate: function(){
+      this.$el.removeClass("active");
     },
 
     _setElement: function() {

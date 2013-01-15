@@ -86,6 +86,13 @@ Think of the view as a controller with a few nice bits of functionality mixed in
 - The ability to specify events eg ```events: { "click .btn": "handleButtonClick" }``` which get automatically bound for you
 - Event subscription (see controller)
 
+## Extras
+
+For free you get:
+
+- Tiny pub/sub so you get ``$.subscribe`` ``$.publish`` methods 
+- Simple State Machine to track state of multiple elements
+
 ## Motivations
 
 You may think, why the hell have they written another JS framework? Well, technically this isn't a framework at all. All we're trying to provide is a really simple base that will get out of your way and give you some sensible defaults on your projects. 
