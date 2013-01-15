@@ -182,7 +182,8 @@
   $.fn.deactivate = function(){
     return this.each(function() {
       $(this).removeClass('active');
-  });
+    });
+  };
 
   /*
     BigBird View

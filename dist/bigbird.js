@@ -172,7 +172,7 @@
       this.subscribe("change", function(e, current_item){
         return (current_item === item) ? item.activate() : item.deactivate();
       });
-      item.prototype.active = $.proxy(function(){ this.publish("change", item); }, this);
+      item.active = $.proxy(function(){ this.publish("change", item); }, this);
     }
   };
 
@@ -188,12 +188,6 @@
     });
   };
 
-  $.fn.withState = function(state_machine) {
-    return this.each(function() {
-      state_machine.add($(this));
-    });
-  };
-
   /*
     BigBird View
     -
@@ -203,7 +197,6 @@
     this._setElement();
     this._setOptions(options || {});
 
-    if (this.stateful) { this.makeStateful(); }
     if (this.subscriptions) { this.subscribeToEvents(); }
     if (this.events) { this.delegateEvents(); }
 
@@ -214,11 +207,6 @@
 
     $: function(selector) {
       return this.$el.find(selector);
-    },
-
-    makeStateful: function() {
-      var sm = new BigBird.StateMachine();
-      this.stateful.withState(sm);
     },
 
     delegateEvents: function() {
