@@ -1,8 +1,11 @@
 // Big Bird
 // v0.1.0
 // by @cjbell88, @ninjabiscuit & @callumj_
-(function($) {
+(function() {
   var BigBird = window.BigBird = {};
+
+  var $ = jQuery;
+  if (!$ && (typeof require !== 'undefined')) { $ = require('jquery'); }
 
   /* jQuery Tiny Pub/Sub - v0.7 - 10/27/2011
    * http://benalman.com/
@@ -238,4 +241,8 @@
 
   View.extend = Controller.extend = extend;
 
-})(jQuery);
+  if (typeof define !== "undefined" && typeof define === "function" && define.amd) {
+    define( "bigbird", [], function () { return BigBird; } );
+  }
+
+})();
