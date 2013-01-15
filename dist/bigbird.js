@@ -152,26 +152,73 @@
   });
 
   /*
+    BigBird Simple State Machine
+  */
+
+  BigBird.StateMachine = function(){
+    this.o = $({});
+  };
+
+  BigBird.StateMachine.prototype = {
+    publish : function(){
+      this.o.trigger.apply( this.o, arguments );
+    },
+
+    subscribe : function(){
+      this.o.bind.apply( this.o, arguments );
+    },
+
+    add: function(item) {
+      this.subscribe("change", function(e, current_item){
+        return (current_item === item) ? item.activate() : item.deactivate();
+      });
+      item.prototype.active = $.proxy(function(){ this.publish("change", item); }, this);
+    }
+  };
+
+  $.fn.activate = function(){
+    return this.each(function() {
+      $(this).addClass('active');
+    });
+  };
+
+  $.fn.deactivate = function(){
+    return this.each(function() {
+      $(this).removeClass('active');
+    });
+  };
+
+  $.fn.withState = function(state_machine) {
+    return this.each(function() {
+      state_machine.add($(this));
+    });
+  };
+
+  /*
     BigBird View
     -
   */
 
   var View = BigBird.View = function(options){
-
     this._setElement();
     this._setOptions(options || {});
 
+    if (this.stateful) { this.makeStateful(); }
     if (this.subscriptions) { this.subscribeToEvents(); }
     if (this.events) { this.delegateEvents(); }
 
     this.initialize.apply(this, arguments);
-
   };
 
   $.extend(View.prototype, Base, {
 
     $: function(selector) {
       return this.$el.find(selector);
+    },
+
+    makeStateful: function() {
+      var sm = new BigBird.StateMachine();
+      this.stateful.withState(sm);
     },
 
     delegateEvents: function() {
@@ -197,9 +244,7 @@
       this.el = this.$el[0];
       this.data = this.$el.data();
     }
-
   });
-
 
   var extend = function(protoProps, staticProps) {
     var parent = this;
@@ -244,5 +289,4 @@
   if (typeof define !== "undefined" && typeof define === "function" && define.amd) {
     define( "bigbird", [], function () { return BigBird; } );
   }
-
 })();
