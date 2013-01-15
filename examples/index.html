@@ -6,10 +6,9 @@
     <h1>Big Bird Example</h1>
     <p>View the source to see how to use.</p>
 
-    <div id="element"></div>
+    <div id="element">Our element</div>
 
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
-    <script type="text/javascript" src="../public/javascripts/underscore.js"></script>
     <script type="text/javascript" src="../dist/bigbird.js"></script>
     <script type="text/javascript">
     var TestApp = TestApp || {}; 
@@ -32,15 +31,24 @@
     };
 
     var BBController = BigBird.Controller.extend({
-      el: "#element",
-
       initialize: function() {
-        console.log('Controller yo!');
+        new SimpleView();
       }
     });
 
-    new BigBird.Initializer({ modules: TestApp.Modules });
+    var SimpleView = BigBird.View.extend({
+      el: $("#element"),
 
+      initialize: function() {
+        console.log('View yo!');
+        this.$el.css({ 'background-color': "red" });
+      }
+    });
+
+    $(function(){
+      new BigBird.Initializer({ modules: TestApp.Modules });
+    });
+    
     </script>
   </body>  
 </html>
