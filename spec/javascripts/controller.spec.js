@@ -1,7 +1,6 @@
 describe("BigBird.Controller", function() {
 
   it("should should set any options as variables on the controller object", function(){
-
     var c = BigBird.Controller.extend();
     c = new c({ test: true });
 
@@ -15,9 +14,7 @@ describe("BigBird.Controller", function() {
     });
     c = new c();
 
-    expect(c.i).toBe(0);
     c.test();
-
     expect(c.i).toBe(1);
   });
 
@@ -31,8 +28,6 @@ describe("BigBird.Controller", function() {
     });
 
     c = new c();
-
-    expect(c.i).toBe(0);
 
     // Publish event
     $.publish("/test");
@@ -51,10 +46,7 @@ describe("BigBird.Controller", function() {
     });
     c = new c();
 
-    expect(c.i).toBe(0);
-
     element.click();
-
     expect(c.i).toBe(1);
   });
 
