@@ -51,12 +51,33 @@ Modules.Common = {
 
 ## The Controller 
 
+A BigBird controller looks like this:
+
+```javascript
+var HomeController = BigBird.Controller.extend({
+  initialize: function() {}
+});
+
+new HomeController();
+```
+
 The controller gives you:
 
 - Event subscription using tiny pub/sub so you can publish an event and have a controller respond. Eg ```subscriptions: { "/test" : "runTest" }``` now running $.publish("/test") will invoke the ``runTest`` function
 - Proxied functions to keep lexical scope
 
 ## The View
+
+A BigBird view looks like this:
+
+```javascript
+var HomeView = BigBird.View.extend({
+  el: $("#home"),
+  initialize: function() {}
+});
+
+new HomeView();
+```
 
 Think of the view as a controller with a few nice bits of functionality mixed in, because that's exactly what it is. The view gives you the following:
 
