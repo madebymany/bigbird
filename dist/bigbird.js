@@ -40,7 +40,7 @@
       this.action = this.base.attr(this.options.action);
       this.application = this.options.modules;
 
-      if (this.module == null || this.action == null || this.application == null) {
+      if (this.module === undefined || this.action === undefined || this.application === undefined) {
         return false;
       }
 
@@ -64,10 +64,10 @@
     execute: function(module, action) {
       // Check existence of module
       module = this.getModule(module);
-      if (module == null) { return false; }
+      if (module === undefined) { return false; }
 
       // Check existence of action on module
-      if (module[action] == null || typeof module[action] !== "function") { return false; }
+      if (module[action] === undefined || typeof module[action] !== "function") { return false; }
 
       module[action].apply();
     },
@@ -188,7 +188,7 @@
     },
 
     _setElement: function() {
-      if (this.el == null) { return false; }
+      if (this.el === undefined) { return false; }
 
       this.$el = this.el instanceof $ ? this.el : $(this.el);
       this.el = this.$el[0];
