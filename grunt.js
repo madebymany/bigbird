@@ -62,7 +62,6 @@ module.exports = function(grunt) {
       },
       globals: {
         jQuery: true,
-        _: true,
         console: true
       }
     },
