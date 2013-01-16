@@ -1,24 +1,24 @@
 describe("BigBird.Controller", function() {
 
-  it("should should set any options as variables on the controller object", function(){
+  describe(".setOptions", function(){
     var c = BigBird.Controller.extend();
-    c = new c({ test: true });
+    var controllerInstance = new c({ test: true, testFunction: function(){ this.test = false; } });
 
-    expect(c.test).toBe(true);
-  });
-
-  it("should allow me to set and call custom functions on the controller", function(){
-    var c = BigBird.Controller.extend({
-      i: 0,
-      test: function() { this.i = 1; }
+    it("sets options as variables on the object", function(){
+      expect(controllerInstance.test).toBe(true);
     });
-    c = new c();
 
-    c.test();
-    expect(c.i).toBe(1);
+    it("allows custom functions to be set", function(){
+      expect(controllerInstance.testFunction).not.toBeUndefined();
+    });
+
+    it("allows custom functions to be called", function(){
+      controllerInstance.testFunction();
+      expect(controllerInstance.test).toBe(false);
+    });
   });
 
-  it("should subscribe to events when a subscriptions array is passed", function(){
+  describe(".subscribeToEvents", function() {
     var c = BigBird.Controller.extend({
       i: 0,
       subscriptions: { "/test" : "runTest" },
@@ -26,12 +26,12 @@ describe("BigBird.Controller", function() {
         this.i = 1;
       }
     });
+    var controllerInstance = new c();
 
-    c = new c();
-
-    // Publish event
-    $.publish("/test");
-    expect(c.i).toBe(1);
+    it("can subscribe to events", function(){
+      $.publish("/test");
+      expect(controllerInstance.i).toBe(1);
+    });
   });
 
   it("should all me to proxy functions to retain the controller scope", function(){

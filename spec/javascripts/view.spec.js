@@ -70,4 +70,21 @@ describe("BigBird.View", function() {
       expect(viewInstance.i).toBe(1);
     });
   });
+
+  describe("stateful functions", function(){
+    var element = $("<div id='el'></div>");
+    var view = BigBird.View.extend({ el: element });
+    var viewInstance = new view();
+
+    it("allows me to set the element as active", function(){
+      viewInstance.activate();
+      expect(element.hasClass('active')).toBe(true);
+    });
+
+    it("allows me to set the element as deactive", function(){
+      viewInstance.activate();
+      viewInstance.deactivate();
+      expect(element.hasClass('active')).toBe(false);
+    });
+  });
 });

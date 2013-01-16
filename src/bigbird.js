@@ -137,7 +137,7 @@
   $.extend(Controller.prototype, Base, {
 
     stateful: function(collection, state_machine){
-      return (state_machine) ? state_machine.addCollection(collection) : new BigBird.StateMachine(collection);
+      return state_machine ? state_machine.addCollection(collection) : new BigBird.StateMachine(collection);
     },
 
     proxyFunctions: function() {
