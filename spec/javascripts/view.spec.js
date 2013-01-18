@@ -12,6 +12,15 @@ describe("BigBird.View", function() {
     it("has a plain dom object with .el", function() {
       expect(viewInstance.el).not.toBeNull();
     });
+
+    it("can set another element at runtime", function(){
+      var other_element = $("<div id='other-element'></div>");
+
+      var original_element = viewInstance.$el;
+
+      viewInstance.setElement(other_element);
+      expect(viewInstance.$el).not.toBe(original_element);
+    });
   });
 
   describe(".delegateEvents", function() {

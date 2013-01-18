@@ -33,7 +33,6 @@
   };
 
   $.extend(Initializer.prototype, {
-
     initialize: function(){
       this.base = this.options.base;
       this.module = this.base.attr(this.options.module);
@@ -94,7 +93,6 @@
   */
 
   var Base = {
-
     publish : $.publish,
     subscribe : $.subscribe,
 
@@ -125,7 +123,6 @@
   */
 
   var Controller = BigBird.Controller = function(options){
-
     this._setOptions(options || {});
 
     if (this.subscriptions) { this.subscribeToEvents(); }
@@ -135,7 +132,6 @@
   };
 
   $.extend(Controller.prototype, Base, {
-
     stateful: function(collection, state_machine){
       return state_machine ? state_machine.addCollection(collection) : new BigBird.StateMachine(collection);
     },
@@ -149,7 +145,6 @@
         }
       }
     }
-
   });
 
   /*
@@ -194,7 +189,7 @@
   */
 
   var View = BigBird.View = function(options){
-    this._setElement();
+    this.setElement();
     this._setOptions(options || {});
 
     if (this.subscriptions) { this.subscribeToEvents(); }
@@ -204,7 +199,6 @@
   };
 
   $.extend(View.prototype, Base, {
-
     $: function(selector) {
       return this.$el.find(selector);
     },
@@ -233,8 +227,8 @@
       this.$el.removeClass("active");
     },
 
-    _setElement: function() {
-      if (this.el === undefined) { return false; }
+    setElement: function(element) {
+      this.el = element || this.el;
 
       this.$el = this.el instanceof $ ? this.el : $(this.el);
       this.el = this.$el[0];
