@@ -236,6 +236,23 @@
     }
   });
 
+  var Module = BigBird.Module = function(options) {
+    this._setOptions(options || {});
+  };
+
+  $.extend(Module.prototype, {
+
+    $: function(selector) {
+      if (this.$el === null) { return; }
+
+      return this.$el.find(selector);
+    },
+
+    
+
+
+  });
+
   var extend = function(protoProps, staticProps) {
     var parent = this;
     var child;
