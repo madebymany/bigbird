@@ -87,67 +87,6 @@
   });
 
   /*
-    BigBird Base
-    -
-    Controller and View inherit from this
-  */
-
-  var Base = {
-    publish : $.publish,
-    subscribe : $.subscribe,
-
-    initialize: function() {},
-
-    subscribeToEvents: function() {
-      for (var key in this.subscriptions) {
-        var methodName = this.subscriptions[key];
-        this.subscribe(key, $.proxy(this[methodName], this));
-      }
-    },
-
-    eventSplitter: /^(\S+)\s*(.*)$/,
-
-    _setOptions: function(options) {
-      this.options = options;
-
-      for (var key in this.options) {
-        this[key] = this.options[key];
-      }
-    }
-  };
-
-  /*
-    BigBird Controller
-    -
-    Rewrite of Andy Walker's (@ninjabiscuit) controller into more of a backbone / underscore style
-  */
-
-  var Controller = BigBird.Controller = function(options){
-    this._setOptions(options || {});
-
-    if (this.subscriptions) { this.subscribeToEvents(); }
-    if (this.proxied) { this.proxyFunctions(); }
-
-    this.initialize.apply(this, arguments);
-  };
-
-  $.extend(Controller.prototype, Base, {
-    stateful: function(collection, state_machine){
-      return state_machine ? state_machine.addCollection(collection) : new BigBird.StateMachine(collection);
-    },
-
-    proxyFunctions: function() {
-      var len = this.proxied.length;
-      for (len; len--;) {
-        var methodName = this.proxied[len];
-        if (typeof this[methodName] === "function") {
-          this[methodName] = $.proxy(this[methodName], this);
-        }
-      }
-    }
-  });
-
-  /*
     BigBird Simple State Machine
   */
 
@@ -184,26 +123,59 @@
   };
 
   /*
-    BigBird View
-    -
+    BigBird Module
   */
 
-  var View = BigBird.View = function(options){
-    this.setElement();
+  var Module = BigBird.Module = function(options) {
     this._setOptions(options || {});
 
+    if (this.el) { this.setElement(this.el); }
     if (this.subscriptions) { this.subscribeToEvents(); }
     if (this.events) { this.delegateEvents(); }
+    if (this.proxied) { this.proxyFunctions(); }
 
     this.initialize.apply(this, arguments);
   };
 
-  $.extend(View.prototype, Base, {
+  $.extend(Module.prototype, {
+    publish : $.publish,
+    subscribe : $.subscribe,
+    $el: null,
+
+    initialize: function() {},
+
     $: function(selector) {
+      if (this.$el === null) { return; }
+
       return this.$el.find(selector);
     },
 
+    /*
+      Proxied Functions.
+      Takes an array of functions ['foo', 'bar'].
+      Uses proxy to retain scope for each.
+    */
+
+    proxyFunctions: function() {
+      var len = this.proxied.length;
+      for (len; len--;) {
+        var methodName = this.proxied[len];
+        if (typeof this[methodName] === "function") {
+          this[methodName] = $.proxy(this[methodName], this);
+        }
+      }
+    },
+
+    subscribeToEvents: function() {
+      for (var key in this.subscriptions) {
+        var methodName = this.subscriptions[key];
+        this.subscribe(key, $.proxy(this[methodName], this));
+      }
+    },
+
     delegateEvents: function() {
+      if (this.$el === null) { return; }
+
       for (var key in this.events) {
         var methodName = this.events[key];
         var method     = $.proxy(this[methodName], this);
@@ -219,6 +191,8 @@
       }
     },
 
+    eventSplitter: /^(\S+)\s*(.*)$/,
+
     activate: function(){
       this.$el.addClass("active");
     },
@@ -233,24 +207,14 @@
       this.$el = this.el instanceof $ ? this.el : $(this.el);
       this.el = this.$el[0];
       this.data = this.$el.data();
-    }
-  });
-
-  var Module = BigBird.Module = function(options) {
-    this._setOptions(options || {});
-  };
-
-  $.extend(Module.prototype, {
-
-    $: function(selector) {
-      if (this.$el === null) { return; }
-
-      return this.$el.find(selector);
     },
 
-    
-
-
+    _setOptions: function(options) {
+      this.options = options;
+      for (var key in this.options) {
+        this[key] = this.options[key];
+      }
+    }
   });
 
   var extend = function(protoProps, staticProps) {
@@ -291,7 +255,7 @@
       return string.charAt(0).toUpperCase() + string.slice(1);
   }
 
-  View.extend = Controller.extend = extend;
+  Module.extend = extend;
 
   if (typeof define !== "undefined" && typeof define === "function" && define.amd) {
     define( "bigbird", [], function () { return BigBird; } );

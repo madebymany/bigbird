@@ -6,8 +6,8 @@ module.exports = function(grunt) {
   grunt.initConfig({
     
     meta: {
-      version: '0.1.0',
-      banner: '// Big Bird\n// v<%= meta.version %>\n// by @cjbell88, @ninjabiscuit & @callumj_'
+      version: '0.1.1',
+      banner: '// Big Bird\n// v<%= meta.version %>\n// by @cjbell88, @ninjabiscuit & @callumj_ all from @madebymany'
     },
 
     lint: {
@@ -30,14 +30,14 @@ module.exports = function(grunt) {
     rig: {
       build: {
         src: ['<banner:meta.banner>', 'src/bigbird.js'],
-        dest: 'dist/bigbird.js'
+        dest: 'bigbird.js'
       }
     },
 
     min: {
       standard: {
         src: ['<banner:meta.banner>', '<config:rig.build.dest>'],
-        dest: 'dist/bigbird.min.js'
+        dest: 'bigbird.min.js'
       }
     },
     

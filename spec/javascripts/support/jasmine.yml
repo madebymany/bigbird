@@ -12,7 +12,7 @@
 #
 src_files: 
     - public/javascripts/*.js
-    - dist/bigbird.js
+    - bigbird.js
 # stylesheets
 #
 # Return an array of stylesheet filepaths relative to src_dir to include before jasmine specs.
