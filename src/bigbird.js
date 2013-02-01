@@ -226,11 +226,8 @@
         var match = key.match(this.eventSplitter);
         var eventName = match[1], selector = match[2];
 
-        if (selector === '') {
-          this.$el.unbind(eventName);
-        } else {
-          this.$el.find(selector).unbind(eventName);
-        }
+        var target = (selector === '') ? this.$el : this.$el.find(selector);
+        target.unbind(eventName);
       }
     },
 

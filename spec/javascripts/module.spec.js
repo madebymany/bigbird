@@ -115,4 +115,33 @@ describe("BigBird.Module", function() {
     });
   });
 
+  describe(".destroy", function() {
+
+    var element, m, moduleInstance;
+
+    beforeEach(function(){
+      element = $("<div id='el'><a href='#' class='btn'></a></div>"),
+      m = BigBird.Module.extend({
+        el: element,
+        i: 0,
+        events: { "click": "elementClickHandler", "click .btn": "buttonClickHandler" },
+        elementClickHandler: function() { this.i = 1; },
+        buttonClickHandler: function() { this.i = 2; return false; }
+      }),
+      moduleInstance = new m();
+
+      moduleInstance.destroy();
+    });
+
+    it("should unbind events on the base element", function() {
+      element.click();
+      expect(moduleInstance.i).toBe(0);
+    });
+
+    it("should unbind events on the child element", function() {
+      element.find('.btn').click();
+      expect(moduleInstance.i).toBe(0);
+    });
+  });
+
 });
