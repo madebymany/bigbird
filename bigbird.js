@@ -2,25 +2,34 @@
 // v0.1.1
 // by @cjbell88, @ninjabiscuit & @callumj_ all from @madebymany
 (function() {
+
+  // Initial setup
+  // -------------
+
   var BigBird = window.BigBird = {};
 
+  // Current version of BigBird
+  BigBird.VERSION = '0.1.1';
+
+  // Use jQuery (our only dependency)
+  // If it's not included and require is included then require it.
   var $ = jQuery;
   if (!$ && (typeof require !== 'undefined')) { $ = require('jquery'); }
 
-  /* jQuery Tiny Pub/Sub - v0.7 - 10/27/2011
-   * http://benalman.com/
-   * Copyright (c) 2011 "Cowboy" Ben Alman; Licensed MIT, GPL */
-
+  // Tiny Pub / Sub
+  // Copyright (c) 2011 "Cowboy" Ben Alman; Licensed MIT, GPL
   var o = $({});
   $.subscribe = function() { o.on.apply(o, arguments); };
   $.unsubscribe = function() { o.off.apply(o, arguments); };
   $.publish = function() { o.trigger.apply(o, arguments); };
 
-  /*
-    BigBird Initializer
-    -
-    Used for DOM ready execution of the application passed to it.
-  */
+  
+  // BigBird Initializer
+  // -------------------
+
+  // Some basic defaults for the initializer. Using the body
+  // and the data-module and data-action to select which module
+  // and action to load.
 
   var InitializerDefaults = {
     base: $(document.body),
@@ -141,6 +150,7 @@
   };
 
   $.extend(Module.prototype, {
+
     publish : $.publish,
     subscribe : $.subscribe,
     $el: null,
@@ -210,6 +220,21 @@
       this.$el = this.el instanceof $ ? this.el : $(this.el);
       this.el = this.$el[0];
       this.data = this.$el.data();
+    },
+
+    destroy: function() {
+      if (this.$el === null) { return; }
+
+      for (var key in this.events) {
+        var match = key.match(this.eventSplitter);
+        var eventName = match[1], selector = match[2];
+
+        if (selector === '') {
+          this.$el.unbind(eventName);
+        } else {
+          this.$el.find(selector).unbind(eventName);
+        }
+      }
     },
 
     _setOptions: function(options) {

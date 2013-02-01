@@ -15,7 +15,7 @@ module.exports = function(grunt) {
     },
 
     'jasmine' : {
-      src : ['public/javascripts/*.js', 'dist/bigbird.js'],
+      src : ['public/javascripts/*.js', 'bigbird.js'],
       specs : 'spec/**/*.spec.js',
       helpers : 'spec/javascripts/helpers/*.js',
       timeout : 10000,
