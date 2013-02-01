@@ -42,6 +42,7 @@
   };
 
   $.extend(Initializer.prototype, {
+
     initialize: function(){
       this.base = this.options.base;
       this.module = this.base.attr(this.options.module);
@@ -95,9 +96,9 @@
 
   });
 
-  /*
-    BigBird Simple State Machine
-  */
+  
+  // BigBird Simple State Machine
+  // ----------------------------
 
   BigBird.StateMachine = function(collection){
     this.o = $({});
@@ -108,6 +109,7 @@
   };
 
   BigBird.StateMachine.prototype = {
+
     publish : function(){
       this.o.trigger.apply( this.o, arguments );
     },
@@ -131,9 +133,9 @@
     }
   };
 
-  /*
-    BigBird Module
-  */
+  
+  // BigBird Module
+  // --------------
 
   var Module = BigBird.Module = function(options) {
     this._setOptions(options || {});
@@ -148,24 +150,29 @@
 
   $.extend(Module.prototype, {
 
+    // Establish references to the pub /sub methods for convienience
     publish : $.publish,
     subscribe : $.subscribe,
+
     $el: null,
 
+    // Initialize is an empty function by default. Override it with your own
+    // initialization logic.
     initialize: function() {},
 
+    // Scoped jQuery dom finds to the `$el`.
+    // Allows for short hand selectors like `this.$('a')`
     $: function(selector) {
       if (this.$el === null) { return; }
 
       return this.$el.find(selector);
     },
 
-    /*
-      Proxied Functions.
-      Takes an array of functions ['foo', 'bar'].
-      Uses proxy to retain scope for each.
-    */
-
+    
+    // Takes an array of functions `['foo', 'bar']`
+    // and uses `$.proxy` to retain lexical scope for each.
+    // this means you can call these later without fear of losing scope
+    // especially useful in callbacks from events like `.bind(event, this.function)`
     proxyFunctions: function() {
       var len = this.proxied.length;
       for (len; len--;) {
@@ -176,6 +183,9 @@
       }
     },
 
+    // Set subscriptions with event and function pairs. `{ "/test": "testMethod" }`
+    // methods are bound to the Module, so should correspond
+    // to methods that you have defined.
     subscribeToEvents: function() {
       for (var key in this.subscriptions) {
         var methodName = this.subscriptions[key];
@@ -183,6 +193,19 @@
       }
     },
 
+    // Set callbacks, where `this.events` is a hash of
+    //
+    // *{"event selector": "callback"}*
+    //
+    //     {
+    //       'mousedown .title':  'edit',
+    //       'click .button':     'save'
+    //       'click .open':       function(e) { ... }
+    //     }
+    //
+    // pairs. Callbacks will be bound to the view, with `this` set properly.
+    // Uses event delegation for efficiency.
+    // Omitting the selector binds the event to `this.el`.
     delegateEvents: function() {
       if (this.$el === null) { return; }
 
@@ -239,6 +262,14 @@
     }
   });
 
+  // Helpers
+  // -------
+
+  // Helper function to correctly set up the prototype chain, for subclasses.
+  // Similar to `goog.inherits`, but uses a hash of prototype properties and
+  // class properties to be extended.
+  // From Backbone JS: https://github.com/documentcloud/backbone/blob/master/backbone.js
+
   var extend = function(protoProps, staticProps) {
     var parent = this;
     var child;
@@ -272,13 +303,16 @@
     return child;
   };
 
-  function capitaliseFirstLetter(string)
-  {
-      return string.charAt(0).toUpperCase() + string.slice(1);
+  // Capitilises the first letter of a string
+  // Used within the Initialiser to make it case insensitive.
+  function capitaliseFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
   }
 
+  // Setup inheritence for the Module, so we can do BigBird.Module.extend({})
   Module.extend = extend;
 
+  // Setup BigBird as a module, if require is available
   if (typeof define !== "undefined" && typeof define === "function" && define.amd) {
     define( "bigbird", [], function () { return BigBird; } );
   }
