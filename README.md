@@ -6,7 +6,9 @@ Big Bird is a Javascript framework of sorts that's designed to help you write mo
 
 ## Getting started
 
-We have an [example carousel](https://github.com/madebymany/bigbird/tree/master/examples/carousel/) written with BigBird to give you a good starting point. The Big Bird source code is alos heavily commented and provides a good way to understand what Big Bird does. 
+We have an [example carousel](https://github.com/madebymany/bigbird/tree/master/examples/carousel/) written with BigBird to give you a good starting point. It's heavily commented to show you some of the functionality of BigBird. 
+
+The [source code](https://github.com/madebymany/bigbird/tree/master/bigbird.js) is also heavily commented, and there are a full suite of tests which help to illustrate the functionality provided.
 
 ## Change log
 
@@ -18,6 +20,16 @@ __0.1.1__
 
 __0.1.0__
 - Initial release
+
+## Contributing
+
+BigBird is built with [grunt](https://github.com/gruntjs/grunt). Please make sure you have [npm](https://npmjs.org/) installed to get up and running. 
+
+1. Fork it, pull it down.
+2. Run `npm install` to get the grunt modules required.
+3. Make changes to the `src/bigbird.js` file.
+4. **Run the tests** and build the source using the `grunt` && `grunt jasmine` tasks
+5. Open a pull request, make sure the tests pass.
 
 ## License
 
