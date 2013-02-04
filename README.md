@@ -31,6 +31,8 @@ BigBird is built with [grunt](https://github.com/gruntjs/grunt). Please make sur
 4. **Run the tests** and build the source using the `grunt` && `grunt jasmine` tasks
 5. Open a pull request, make sure the tests pass.
 
+BigBird is maintained by [cjbell88](http://github.com/cjbell88), [callum_](http://github.com/callum_) and [ninjabiscuit](http://github.com/ninjabiscuit)
+
 ## License
 
 BigBird is released under the MIT license:
