@@ -9,7 +9,7 @@
     <div id="element">Our element</div>
 
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
-    <script type="text/javascript" src="../dist/bigbird.js"></script>
+    <script type="text/javascript" src="../bigbird.js"></script>
     <script type="text/javascript">
     var TestApp = TestApp || {}; 
     TestApp.Modules = TestApp.Modules || {};
@@ -25,29 +25,29 @@
         console.log('Init on test called');
       },
       index: function(){
-        new BBController();
+        new SimpleModule();
         console.log('Index on test called');
       }
     };
 
-    var BBController = BigBird.Controller.extend({
-      initialize: function() {
-        new SimpleView();
-      }
-    });
+    var SimpleModule = BigBird.Module.extend({
+      el: $('#element'),
 
-    var SimpleView = BigBird.View.extend({
-      el: $("#element"),
+      events: {
+        'click': 'handleElementClick'
+      },
 
       initialize: function() {
-        console.log('View yo!');
-        this.$el.css({ 'background-color': "red" });
+        console.log('SimpleModule init');
+      },
+
+      handleElementClick: function(){
+        console.log('Clicked!');
       }
+
     });
 
-    $(function(){
-      new BigBird.Initializer({ modules: TestApp.Modules });
-    });
+    new BigBird.Initializer({ modules: TestApp.Modules });
     
     </script>
   </body>  

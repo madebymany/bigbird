@@ -1,26 +1,35 @@
 // Big Bird
-// v0.1.0
-// by @cjbell88, @ninjabiscuit & @callumj_
+// v0.1.1
+// by @cjbell88, @ninjabiscuit & @callumj_ all from @madebymany
 (function() {
+
+  // Initial setup
+  // -------------
+
   var BigBird = window.BigBird = {};
 
+  // Current version of BigBird
+  BigBird.VERSION = '0.1.1';
+
+  // Use jQuery (our only dependency)
+  // If it's not included and require is included then require it.
   var $ = jQuery;
   if (!$ && (typeof require !== 'undefined')) { $ = require('jquery'); }
 
-  /* jQuery Tiny Pub/Sub - v0.7 - 10/27/2011
-   * http://benalman.com/
-   * Copyright (c) 2011 "Cowboy" Ben Alman; Licensed MIT, GPL */
-
+  // Tiny Pub / Sub
+  // Copyright (c) 2011 "Cowboy" Ben Alman; Licensed MIT, GPL
   var o = $({});
   $.subscribe = function() { o.on.apply(o, arguments); };
   $.unsubscribe = function() { o.off.apply(o, arguments); };
   $.publish = function() { o.trigger.apply(o, arguments); };
 
-  /*
-    BigBird Initializer
-    -
-    Used for DOM ready execution of the application passed to it.
-  */
+  
+  // BigBird Initializer
+  // -------------------
+
+  // Some basic defaults for the initializer. Using the body
+  // and the data-module and data-action to select which module
+  // and action to load.
 
   var InitializerDefaults = {
     base: $(document.body),
@@ -36,6 +45,7 @@
   };
 
   $.extend(Initializer.prototype, {
+
     initialize: function(){
       this.base = this.options.base;
       this.module = this.base.attr(this.options.module);
@@ -89,70 +99,9 @@
 
   });
 
-  /*
-    BigBird Base
-    -
-    Controller and View inherit from this
-  */
-
-  var Base = {
-    publish : $.publish,
-    subscribe : $.subscribe,
-
-    initialize: function() {},
-
-    subscribeToEvents: function() {
-      for (var key in this.subscriptions) {
-        var methodName = this.subscriptions[key];
-        this.subscribe(key, $.proxy(this[methodName], this));
-      }
-    },
-
-    eventSplitter: /^(\S+)\s*(.*)$/,
-
-    _setOptions: function(options) {
-      this.options = options;
-
-      for (var key in this.options) {
-        this[key] = this.options[key];
-      }
-    }
-  };
-
-  /*
-    BigBird Controller
-    -
-    Rewrite of Andy Walker's (@ninjabiscuit) controller into more of a backbone / underscore style
-  */
-
-  var Controller = BigBird.Controller = function(options){
-    this._setOptions(options || {});
-
-    if (this.subscriptions) { this.subscribeToEvents(); }
-    if (this.proxied) { this.proxyFunctions(); }
-
-    this.initialize.apply(this, arguments);
-  };
-
-  $.extend(Controller.prototype, Base, {
-    stateful: function(collection, state_machine){
-      return state_machine ? state_machine.addCollection(collection) : new BigBird.StateMachine(collection);
-    },
-
-    proxyFunctions: function() {
-      var len = this.proxied.length;
-      for (len; len--;) {
-        var methodName = this.proxied[len];
-        if (typeof this[methodName] === "function") {
-          this[methodName] = $.proxy(this[methodName], this);
-        }
-      }
-    }
-  });
-
-  /*
-    BigBird Simple State Machine
-  */
+  
+  // BigBird Simple State Machine
+  // ----------------------------
 
   BigBird.StateMachine = function(collection){
     this.o = $({});
@@ -163,6 +112,7 @@
   };
 
   BigBird.StateMachine.prototype = {
+
     publish : function(){
       this.o.trigger.apply( this.o, arguments );
     },
@@ -186,27 +136,82 @@
     }
   };
 
-  /*
-    BigBird View
-    -
-  */
+  
+  // BigBird Module
+  // --------------
 
-  var View = BigBird.View = function(options){
-    this.setElement();
+  var Module = BigBird.Module = function(options) {
     this._setOptions(options || {});
 
+    if (this.el) { this.setElement(this.el); }
     if (this.subscriptions) { this.subscribeToEvents(); }
     if (this.events) { this.delegateEvents(); }
+    if (this.proxied) { this.proxyFunctions(); }
 
     this.initialize.apply(this, arguments);
   };
 
-  $.extend(View.prototype, Base, {
+  $.extend(Module.prototype, {
+
+    // Establish references to the pub /sub methods for convienience
+    publish : $.publish,
+    subscribe : $.subscribe,
+
+    $el: null,
+
+    // Initialize is an empty function by default. Override it with your own
+    // initialization logic.
+    initialize: function() {},
+
+    // Scoped jQuery dom finds to the `$el`.
+    // Allows for short hand selectors like `this.$('a')`
     $: function(selector) {
+      if (this.$el === null) { return; }
+
       return this.$el.find(selector);
     },
 
+    
+    // Takes an array of functions `['foo', 'bar']`
+    // and uses `$.proxy` to retain lexical scope for each.
+    // this means you can call these later without fear of losing scope
+    // especially useful in callbacks from events like `.bind(event, this.function)`
+    proxyFunctions: function() {
+      var len = this.proxied.length;
+      for (len; len--;) {
+        var methodName = this.proxied[len];
+        if (typeof this[methodName] === "function") {
+          this[methodName] = $.proxy(this[methodName], this);
+        }
+      }
+    },
+
+    // Set subscriptions with event and function pairs. `{ "/test": "testMethod" }`
+    // methods are bound to the Module, so should correspond
+    // to methods that you have defined.
+    subscribeToEvents: function() {
+      for (var key in this.subscriptions) {
+        var methodName = this.subscriptions[key];
+        this.subscribe(key, $.proxy(this[methodName], this));
+      }
+    },
+
+    // Set callbacks, where `this.events` is a hash of
+    //
+    // *{"event selector": "callback"}*
+    //
+    //     {
+    //       'mousedown .title':  'edit',
+    //       'click .button':     'save'
+    //       'click .open':       function(e) { ... }
+    //     }
+    //
+    // pairs. Callbacks will be bound to the view, with `this` set properly.
+    // Uses event delegation for efficiency.
+    // Omitting the selector binds the event to `this.el`.
     delegateEvents: function() {
+      if (this.$el === null) { return; }
+
       for (var key in this.events) {
         var methodName = this.events[key];
         var method     = $.proxy(this[methodName], this);
@@ -222,6 +227,8 @@
       }
     },
 
+    eventSplitter: /^(\S+)\s*(.*)$/,
+
     activate: function(){
       this.$el.addClass("active");
     },
@@ -236,8 +243,35 @@
       this.$el = this.el instanceof $ ? this.el : $(this.el);
       this.el = this.$el[0];
       this.data = this.$el.data();
+    },
+
+    destroy: function() {
+      if (this.$el === null) { return; }
+
+      for (var key in this.events) {
+        var match = key.match(this.eventSplitter);
+        var eventName = match[1], selector = match[2];
+
+        var target = (selector === '') ? this.$el : this.$el.find(selector);
+        target.unbind(eventName);
+      }
+    },
+
+    _setOptions: function(options) {
+      this.options = options;
+      for (var key in this.options) {
+        this[key] = this.options[key];
+      }
     }
   });
+
+  // Helpers
+  // -------
+
+  // Helper function to correctly set up the prototype chain, for subclasses.
+  // Similar to `goog.inherits`, but uses a hash of prototype properties and
+  // class properties to be extended.
+  // From Backbone JS: https://github.com/documentcloud/backbone/blob/master/backbone.js
 
   var extend = function(protoProps, staticProps) {
     var parent = this;
@@ -272,13 +306,16 @@
     return child;
   };
 
-  function capitaliseFirstLetter(string)
-  {
-      return string.charAt(0).toUpperCase() + string.slice(1);
+  // Capitilises the first letter of a string
+  // Used within the Initialiser to make it case insensitive.
+  function capitaliseFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
   }
 
-  View.extend = Controller.extend = extend;
+  // Setup inheritence for the Module, so we can do BigBird.Module.extend({})
+  Module.extend = extend;
 
+  // Setup BigBird as a module, if require is available
   if (typeof define !== "undefined" && typeof define === "function" && define.amd) {
     define( "bigbird", [], function () { return BigBird; } );
   }
