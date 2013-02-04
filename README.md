@@ -2,105 +2,39 @@
 
 [![Build Status](https://travis-ci.org/madebymany/bigbird.png?branch=master)](https://travis-ci.org/madebymany/bigbird/)
 
-A stripped back JS framework built out of sensible patterns used here at Made by Many. We don't include a full blown MVC stack, so if you're looking for something that tracks state then go check out Backbone or Ember. What BigBird gives you is a controller & a simple view layer, coupled with a kind-of router. It fits in remarkably well when you're building a site that's predominantly written in a server-side language but you need to add some JS magic and don't want one big unmanageable JS file.   
+Big Bird is a JavaScript framework of sorts that's designed to help you write more maintainable, modular JavaScript. It fits perfectly when you don't need a full blown MVC framework like [Backbone](http://backbgonejs.org) or [Ember](http://emberjs.com). Big Bird is suited to situations where you are rendering on the server-side but need to progressively enhance your application with a sprinkling of JS magic and you're fed up with writing monolithic jQuery functions that are difficult to maintain. 
 
-View the [source of the example](https://github.com/madebymany/bigbird/blob/master/examples/index.html) to see more.
+## Getting started
 
-## Quick Start
+We have an [example carousel](https://github.com/madebymany/bigbird/tree/master/examples/carousel/) written with Big Bird to give you a good starting point. It's heavily commented to show you some of the functionality of Big Bird. 
 
-To get up and running:
+The [source code](https://github.com/madebymany/bigbird/tree/master/bigbird.js) is also heavily commented, and there are a full suite of tests which help to illustrate the functionality provided.
 
-1. Grab the latest version from the ``/dist`` folder (either minified or unminified)
-2. Include jQuery in your project 
-3. Create 'modules' for your controller and actions, as described below
-4. Instantiate the ``BigBird.Initializer`` with your modules passed in.
+## Change log
 
-## The Initialiser
+**0.1.1**
+- Refactoring controllers and views into one class called ``Module``.
+- Added new ``destroy()`` method for tearing down views to unbind events.
+- Added a carousel example to help people get started.
+- Heavily commented the source code.
 
-Modules tie JS functions inside named objects to controller methods / actions. So for example you might have a module like this:
+**0.1.0**
+- Initial release
 
-```javascript
-var Modules = {};
+## Contributing
 
-Modules.Pages = {
-  initialize: function() {
-    console.log('Called everytime Pages are loaded');
-  },
+Big Bird is built with [grunt](https://github.com/gruntjs/grunt). Please make sure you have [npm](https://npmjs.org/) installed to get up and running. 
 
-  index: function() {
-    console.log('Called when Pages index is viewed');
-  }
-};
+1. Fork it, pull it down.
+2. Run `npm install` to get the grunt modules required.
+3. Make changes to the `src/bigbird.js` file.
+4. **Run the tests** and build the source using the `grunt` && `grunt jasmine` tasks
+5. Open a pull request, make sure the tests pass.
 
-new BigBird.Initializer({ modules: Modules });
-```
-
-And when the ``<body>`` tag contains the ``data-module="Pages"`` and ``data-action="index"`` then the ``Pages.index`` method will be called, along with the ``Pages.initialize`` function. 
-
-In addition, you can also have 'generic' helper functions that get called on *every* request. These are defined in a ``Common`` module, as below:
-
-```javascript
-...
-Modules.Common = {
-  initialize: {
-    console.log('Called on every page view');
-  }
-};
-...
-```
-
-## The Controller 
-
-A BigBird controller looks like this:
-
-```javascript
-var HomeController = BigBird.Controller.extend({
-  initialize: function() {}
-});
-
-new HomeController();
-```
-
-The controller gives you:
-
-- Event subscription using tiny pub/sub so you can publish an event and have a controller respond. Eg ```subscriptions: { "/test" : "runTest" }``` now running $.publish("/test") will invoke the ``runTest`` function
-- Proxied functions to keep lexical scope
-
-## The View
-
-A BigBird view looks like this:
-
-```javascript
-var HomeView = BigBird.View.extend({
-  el: $("#home"),
-  initialize: function() {}
-});
-
-new HomeView();
-```
-
-Think of the view as a controller with a few nice bits of functionality mixed in, because that's exactly what it is. The view gives you the following:
-
-- The ability to specify an element eg ```el: $(".element")``` 
-- Some nice shorthand methods for doing things to this element: ```this.$el```, ```this.el```, ```this.$(".query-inside-el")```
-- The ability to specify events eg ```events: { "click .btn": "handleButtonClick" }``` which get automatically bound for you
-- Event subscription (see controller)
-
-## Extras
-
-For free you get:
-
-- Tiny pub/sub so you get ``$.subscribe`` ``$.publish`` methods 
-- Simple State Machine to track state of multiple elements
-
-## Motivations
-
-You may think, why the hell have they written another JS framework? Well, technically this isn't a framework at all. All we're trying to provide is a really simple base that will get out of your way and give you some sensible defaults on your projects. 
-
-We've grown this out of what we've built on projects such as ITV News and Sport and have found that we often repeat the same patterns in our application development.
+Big Bird is maintained by [cjbell88](http://github.com/cjbell88), [callum-](http://github.com/callum-) and [ninjabiscuit](http://github.com/ninjabiscuit).
 
 ## License
 
-BigBird is released under the MIT license:
+Big Bird is released under the MIT license:
 
 www.opensource.org/licenses/MIT
