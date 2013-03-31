@@ -10,8 +10,7 @@
 
   // Use jQuery (our only dependency)
   // If it's not included and require is included then require it.
-  var $ = jQuery;
-  if (!$ && (typeof require !== 'undefined')) { $ = require('jquery'); }
+  var $ = window.jQuery || window.Zepto || window.ender || window.$;
 
   // Tiny Pub / Sub
   // Copyright (c) 2011 "Cowboy" Ben Alman; Licensed MIT, GPL
@@ -20,7 +19,6 @@
   $.unsubscribe = function() { o.off.apply(o, arguments); };
   $.publish = function() { o.trigger.apply(o, arguments); };
 
-  
   // BigBird Initializer
   // -------------------
 
@@ -56,7 +54,7 @@
       if (this.module) { this.module = this.module.toLowerCase(); }
       if (this.action) { this.action = this.action.toLowerCase(); }
 
-      $(document.body).ready($.proxy(this.setup, this));
+      $(document.body).ready(this.proxy(this.setup));
     },
 
     setup: function() {
@@ -119,17 +117,18 @@
     },
 
     addCollection: function(items) {
-      $.each(items, $.proxy(function(item){
-        this.add(item);
-      }, this));
+      for (var length = items.length, i = 0; i < length; i++) {
+        this.add(items[i]);
+      }
     },
 
     add: function(item) {
+      var self = this;
       this.subscribe("change", function(e, current_item){
         return (current_item === item) ? item.activate() : item.deactivate();
       });
 
-      item.active = $.proxy(function(){ this.publish("change", item); }, this);
+      item.active = function(){ self.publish("change", item); };
     }
   };
 
@@ -149,6 +148,13 @@
   };
 
   $.extend(Module.prototype, {
+
+    proxy : function(fn){
+      var self = this;
+      return function(){
+        return fn.apply(self, arguments);
+      };
+    },
 
     // Establish references to the pub /sub methods for convienience
     publish : $.publish,
@@ -170,7 +176,7 @@
 
     
     // Takes an array of functions `['foo', 'bar']`
-    // and uses `$.proxy` to retain lexical scope for each.
+    // and uses `this.proxy` to retain lexical scope for each.
     // this means you can call these later without fear of losing scope
     // especially useful in callbacks from events like `.bind(event, this.function)`
     proxyFunctions: function() {
@@ -178,7 +184,7 @@
       for (len; len--;) {
         var methodName = this.proxied[len];
         if (typeof this[methodName] === "function") {
-          this[methodName] = $.proxy(this[methodName], this);
+          this[methodName] = this.proxy(this[methodName]);
         }
       }
     },
@@ -189,7 +195,7 @@
     subscribeToEvents: function() {
       for (var key in this.subscriptions) {
         var methodName = this.subscriptions[key];
-        this.subscribe(key, $.proxy(this[methodName], this));
+        this.subscribe(key, this.proxy(this[methodName]));
       }
     },
 
@@ -211,7 +217,7 @@
 
       for (var key in this.events) {
         var methodName = this.events[key];
-        var method     = $.proxy(this[methodName], this);
+        var method     = this.proxy(this[methodName]);
 
         var match      = key.match(this.eventSplitter);
         var eventName  = match[1], selector = match[2];
