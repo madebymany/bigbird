@@ -33,13 +33,27 @@
     modules: {}
   };
 
+  var copyObject = function(obj) {
+    var source;
+    for (var len = arguments.length, i = 1; i < len; i++) {
+      source = arguments[i];
+      if (!source) { continue; }
+      for (var key in source) {
+        if (source.hasOwnProperty(key)) {
+          obj[key] = source[key];
+        }
+      }
+    }
+    return obj;
+  };
+
   var Initializer = BigBird.Initializer = function(options){
-    this.options = $.extend({}, InitializerDefaults, options || {});
+    this.options = copyObject({}, InitializerDefaults, options);
 
     this.initialize.apply(this, arguments);
   };
 
-  $.extend(Initializer.prototype, {
+  copyObject(Initializer.prototype, {
 
     initialize: function(){
       this.base = this.options.base;
@@ -94,7 +108,7 @@
 
   });
 
-  
+
   // BigBird Simple State Machine
   // ----------------------------
 
@@ -132,7 +146,7 @@
     }
   };
 
-  
+
   // BigBird Module
   // --------------
 
@@ -147,7 +161,14 @@
     this.initialize.apply(this, arguments);
   };
 
-  $.extend(Module.prototype, {
+  Module.proxy = function(fn){
+    var self = this;
+    return function(){
+      return fn.apply(self, arguments);
+    };
+  };
+
+  copyObject(Module.prototype, {
 
     proxy : function(fn){
       var self = this;
@@ -174,7 +195,7 @@
       return this.$el.find(selector);
     },
 
-    
+
     // Takes an array of functions `['foo', 'bar']`
     // and uses `this.proxy` to retain lexical scope for each.
     // this means you can call these later without fear of losing scope
@@ -290,7 +311,7 @@
     }
 
     // Add static properties to the constructor function, if supplied.
-    $.extend(child, parent, staticProps);
+    copyObject(child, parent, staticProps);
 
     // Set the prototype chain to inherit from `parent`, without calling
     // `parent`'s constructor function.
@@ -300,7 +321,7 @@
 
     // Add prototype properties (instance properties) to the subclass,
     // if supplied.
-    if (protoProps) { $.extend(child.prototype, protoProps); }
+    if (protoProps) { copyObject(child.prototype, protoProps); }
 
     // Set a convenience property in case the parent's prototype is needed
     // later.
