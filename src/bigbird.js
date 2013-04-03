@@ -40,13 +40,11 @@
   // and action to load.
 
   var InitializerDefaults = {
-    module: "data-module",
-    action: "data-action",
     modules: {}
   };
 
   var Initializer = BigBird.Initializer = function(options) {
-    this.options = merge({}, InitializerDefaults, options);
+    this.options = merge({ modules: {} }, options);
     this.initialize.apply(this, arguments);
   };
 
@@ -54,8 +52,8 @@
 
     initialize: function(){
 
-      this.module = document.body.getAttribute(this.options.module);
-      this.action = document.body.getAttribute(this.options.action);
+      this.module = document.body.getAttribute("data-module");
+      this.action = document.body.getAttribute("data-action");
       this.application = this.options.modules;
 
       if (this.module === undefined || this.action === undefined || this.application === undefined) {
