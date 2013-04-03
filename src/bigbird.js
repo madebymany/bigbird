@@ -55,7 +55,7 @@
       this.application = this.options.modules;
 
       if (typeof this.module !== "string" || typeof this.action !== "string" || this.application === undefined) {
-        return false;
+        throw "BigBird initializer requires module and action to be specified on the document body";
       }
 
       this.module = this.module.toLowerCase();
