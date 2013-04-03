@@ -32,16 +32,14 @@
     return obj;
   };
 
+  var proxy = function(fn, context){
+    return function(){
+      return fn.apply(context, arguments);
+    };
+  };
+
   // BigBird Initializer
   // -------------------
-
-  // Some basic defaults for the initializer. Using the body
-  // and the data-module and data-action to select which module
-  // and action to load.
-
-  var InitializerDefaults = {
-    modules: {}
-  };
 
   var Initializer = BigBird.Initializer = function(options) {
     this.options = merge({ modules: {} }, options);
@@ -56,14 +54,14 @@
       this.action = document.body.getAttribute("data-action");
       this.application = this.options.modules;
 
-      if (this.module === undefined || this.action === undefined || this.application === undefined) {
+      if (typeof this.module !== "string" || typeof this.action !== "string" || this.application === undefined) {
         return false;
       }
 
-      if (this.module) { this.module = this.module.toLowerCase(); }
-      if (this.action) { this.action = this.action.toLowerCase(); }
+      this.module = this.module.toLowerCase();
+      this.action = this.action.toLowerCase();
 
-      $(document.body).ready(this.proxy(this.setup, this));
+      $(document.body).ready(proxy(this.setup, this));
     },
 
     setup: function() {
@@ -160,11 +158,7 @@
 
     merge : merge,
 
-    proxy : function(fn, context){
-      return function(){
-        return fn.apply(context, arguments);
-      };
-    },
+    proxy : proxy,
 
     // Establish references to the pub /sub methods for convienience
     publish : $.publish,
