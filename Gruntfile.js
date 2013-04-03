@@ -8,7 +8,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-jasmine');
 
   grunt.initConfig({
-    
+
     meta: {
       version: '0.1.1',
       banner: '// Big Bird\n// v<%= meta.version %>\n// by @cjbell88, @ninjabiscuit & @callumj_ all from @madebymany'
@@ -41,7 +41,7 @@ module.exports = function(grunt) {
       },
       standard: {
         files :{
-          'bigbird.min.js' : ['<banner:meta.banner>', '<config:rig.build.dest>']
+          'bigbird.min.js' : ['<banner:meta.banner>', 'bigbird.js']
         }
       }
     },
@@ -84,6 +84,6 @@ module.exports = function(grunt) {
   });
 
   grunt.registerTask('travis', ['rig', 'jasmine']);
-  grunt.registerTask('default', ['rig', 'min']);
+  grunt.registerTask('default', ['rig', 'uglify', 'jasmine']);
 
 };

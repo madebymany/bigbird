@@ -18,7 +18,7 @@
   $.unsubscribe = function() { o.off.apply(o, arguments); };
   $.publish = function() { o.trigger.apply(o, arguments); };
 
-  var copyObject = function(obj) {
+  var merge = function(obj) {
     var source;
     for (var len = arguments.length, i = 1; i < len; i++) {
       source = arguments[i];
@@ -46,11 +46,11 @@
   };
 
   var Initializer = BigBird.Initializer = function(options) {
-    this.options = copyObject({}, InitializerDefaults, options);
+    this.options = merge({}, InitializerDefaults, options);
     this.initialize.apply(this, arguments);
   };
 
-  copyObject(Initializer.prototype, {
+  merge(Initializer.prototype, {
 
     initialize: function(){
 
@@ -158,7 +158,9 @@
     this.initialize.apply(this, arguments);
   };
 
-  copyObject(Module.prototype, {
+  merge(Module.prototype, {
+
+    merge : merge,
 
     proxy : function(fn, context){
       return function(){
@@ -300,7 +302,7 @@
     }
 
     // Add static properties to the constructor function, if supplied.
-    copyObject(child, parent, staticProps);
+    merge(child, parent, staticProps);
 
     // Set the prototype chain to inherit from `parent`, without calling
     // `parent`'s constructor function.
@@ -310,7 +312,7 @@
 
     // Add prototype properties (instance properties) to the subclass,
     // if supplied.
-    if (protoProps) { copyObject(child.prototype, protoProps); }
+    if (protoProps) { merge(child.prototype, protoProps); }
 
     // Set a convenience property in case the parent's prototype is needed
     // later.
