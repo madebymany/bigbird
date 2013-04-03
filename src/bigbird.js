@@ -9,7 +9,6 @@
   BigBird.VERSION = '0.1.1';
 
   // Use jQuery (our only dependency)
-  // If it's not included and require is included then require it.
   var $ = window.jQuery || window.Zepto || window.ender || window.$;
 
   // Tiny Pub / Sub
@@ -18,20 +17,6 @@
   $.subscribe = function() { o.on.apply(o, arguments); };
   $.unsubscribe = function() { o.off.apply(o, arguments); };
   $.publish = function() { o.trigger.apply(o, arguments); };
-
-  // BigBird Initializer
-  // -------------------
-
-  // Some basic defaults for the initializer. Using the body
-  // and the data-module and data-action to select which module
-  // and action to load.
-
-  var InitializerDefaults = {
-    base: $(document.body),
-    module: "data-module",
-    action: "data-action",
-    modules: {}
-  };
 
   var copyObject = function(obj) {
     var source;
@@ -47,18 +32,30 @@
     return obj;
   };
 
-  var Initializer = BigBird.Initializer = function(options){
-    this.options = copyObject({}, InitializerDefaults, options);
+  // BigBird Initializer
+  // -------------------
 
+  // Some basic defaults for the initializer. Using the body
+  // and the data-module and data-action to select which module
+  // and action to load.
+
+  var InitializerDefaults = {
+    module: "data-module",
+    action: "data-action",
+    modules: {}
+  };
+
+  var Initializer = BigBird.Initializer = function(options) {
+    this.options = copyObject({}, InitializerDefaults, options);
     this.initialize.apply(this, arguments);
   };
 
   copyObject(Initializer.prototype, {
 
     initialize: function(){
-      this.base = this.options.base;
-      this.module = this.base.attr(this.options.module);
-      this.action = this.base.attr(this.options.action);
+
+      this.module = document.body.getAttribute(this.options.module);
+      this.action = document.body.getAttribute(this.options.action);
       this.application = this.options.modules;
 
       if (this.module === undefined || this.action === undefined || this.application === undefined) {
@@ -68,7 +65,7 @@
       if (this.module) { this.module = this.module.toLowerCase(); }
       if (this.action) { this.action = this.action.toLowerCase(); }
 
-      $(document.body).ready(this.proxy(this.setup));
+      $(document.body).ready(this.proxy(this.setup, this));
     },
 
     setup: function() {
@@ -161,19 +158,11 @@
     this.initialize.apply(this, arguments);
   };
 
-  Module.proxy = function(fn){
-    var self = this;
-    return function(){
-      return fn.apply(self, arguments);
-    };
-  };
-
   copyObject(Module.prototype, {
 
-    proxy : function(fn){
-      var self = this;
+    proxy : function(fn, context){
       return function(){
-        return fn.apply(self, arguments);
+        return fn.apply(context, arguments);
       };
     },
 
@@ -205,7 +194,7 @@
       for (len; len--;) {
         var methodName = this.proxied[len];
         if (typeof this[methodName] === "function") {
-          this[methodName] = this.proxy(this[methodName]);
+          this[methodName] = this.proxy(this[methodName], this);
         }
       }
     },
@@ -216,7 +205,7 @@
     subscribeToEvents: function() {
       for (var key in this.subscriptions) {
         var methodName = this.subscriptions[key];
-        this.subscribe(key, this.proxy(this[methodName]));
+        this.subscribe(key, this.proxy(this[methodName], this));
       }
     },
 
@@ -238,7 +227,7 @@
 
       for (var key in this.events) {
         var methodName = this.events[key];
-        var method     = this.proxy(this[methodName]);
+        var method     = this.proxy(this[methodName], this);
 
         var match      = key.match(this.eventSplitter);
         var eventName  = match[1], selector = match[2];
