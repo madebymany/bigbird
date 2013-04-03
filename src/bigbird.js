@@ -1,5 +1,7 @@
 (function() {
 
+  "use strict";
+
   // Initial setup
   // -------------
 
@@ -41,8 +43,17 @@
   // BigBird Initializer
   // -------------------
 
+  // Some basic defaults for the initializer. Using the body
+  // and the data-module and data-action to select which module
+  // and action to load.
+
+  var InitializerDefaults = {
+    base : document.body,
+    modules: {}
+  };
+
   var Initializer = BigBird.Initializer = function(options) {
-    this.options = merge({ modules: {} }, options);
+    this.options = merge(InitializerDefaults, options);
     this.initialize.apply(this, arguments);
   };
 
@@ -50,18 +61,20 @@
 
     initialize: function(){
 
-      this.module = document.body.getAttribute("data-module");
-      this.action = document.body.getAttribute("data-action");
+      this.set_module_action("module");
+      this.set_module_action("action");
+
       this.application = this.options.modules;
 
-      if (typeof this.module !== "string" || typeof this.action !== "string" || this.application === undefined) {
-        throw "BigBird initializer requires module and action to be specified on the document body";
-      }
-
-      this.module = this.module.toLowerCase();
-      this.action = this.action.toLowerCase();
-
       $(document.body).ready(proxy(this.setup, this));
+    },
+
+    set_module_action : function(name) {
+      var value = this.base.getAttribute("data-" + name);
+      if (typeof value !== "string" || value === "") {
+        throw name + " was not set";
+      }
+      this[name] = value;
     },
 
     setup: function() {
