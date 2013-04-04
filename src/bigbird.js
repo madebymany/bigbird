@@ -116,45 +116,6 @@
 
   });
 
-
-  // BigBird Simple State Machine
-  // ----------------------------
-
-  BigBird.StateMachine = function(collection){
-    this.o = $({});
-
-    if (collection) {
-      this.addCollection(collection);
-    }
-  };
-
-  BigBird.StateMachine.prototype = {
-
-    publish : function(){
-      this.o.trigger.apply( this.o, arguments );
-    },
-
-    subscribe : function(){
-      this.o.bind.apply( this.o, arguments );
-    },
-
-    addCollection: function(items) {
-      for (var length = items.length, i = 0; i < length; i++) {
-        this.add(items[i]);
-      }
-    },
-
-    add: function(item) {
-      var self = this;
-      this.subscribe("change", function(e, current_item){
-        return (current_item === item) ? item.activate() : item.deactivate();
-      });
-
-      item.active = function(){ self.publish("change", item); };
-    }
-  };
-
-
   // BigBird Module
   // --------------
 

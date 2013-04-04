@@ -45,7 +45,7 @@ describe("BigBird.StateMachine", function(){
       spyOn(sm, 'subscribe');
       sm.add({});
       expect(sm.subscribe).toHaveBeenCalled();
-    });  
+    });
   });
 
   describe("active", function(){
@@ -85,7 +85,7 @@ describe("BigBird.StateMachine", function(){
 
       sm.add(object_one);
       sm.add(object_two);
-      
+
       object_one.active();
       expect(object_two.deactivate).toHaveBeenCalled();
     });
