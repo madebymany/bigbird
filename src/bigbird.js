@@ -202,7 +202,7 @@
         var eventName  = match[1], selector = match[2];
 
         if (selector === '') {
-          this.$el.bind(eventName, method);
+          this.$el.on(eventName, method);
         } else {
           this.$el.delegate(selector, eventName, method);
         }
