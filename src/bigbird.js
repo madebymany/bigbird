@@ -1,5 +1,7 @@
 (function() {
 
+  "use strict";
+
   // Initial setup
   // -------------
 
@@ -9,9 +11,7 @@
   BigBird.VERSION = '0.1.1';
 
   // Use jQuery (our only dependency)
-  // If it's not included and require is included then require it.
-  var $ = jQuery;
-  if (!$ && (typeof require !== 'undefined')) { $ = require('jquery'); }
+  var $ = window.jQuery || window.Zepto || window.ender || window.$;
 
   // Tiny Pub / Sub
   // Copyright (c) 2011 "Cowboy" Ben Alman; Licensed MIT, GPL
@@ -20,7 +20,26 @@
   $.unsubscribe = function() { o.off.apply(o, arguments); };
   $.publish = function() { o.trigger.apply(o, arguments); };
 
-  
+  var merge = function(obj) {
+    var source;
+    for (var len = arguments.length, i = 1; i < len; i++) {
+      source = arguments[i];
+      if (!source) { continue; }
+      for (var key in source) {
+        if (source.hasOwnProperty(key)) {
+          obj[key] = source[key];
+        }
+      }
+    }
+    return obj;
+  };
+
+  var proxy = function(fn, context){
+    return function(){
+      return fn.apply(context, arguments);
+    };
+  };
+
   // BigBird Initializer
   // -------------------
 
@@ -29,34 +48,35 @@
   // and action to load.
 
   var InitializerDefaults = {
-    base: $(document.body),
-    module: "data-module",
-    action: "data-action",
+    base : document.body,
     modules: {}
   };
 
-  var Initializer = BigBird.Initializer = function(options){
-    this.options = $.extend({}, InitializerDefaults, options || {});
-
-    this.initialize.apply(this, arguments);
+  var Initializer = BigBird.Initializer = function(options) {
+    this.options = merge(InitializerDefaults, options);
+    this.initialize.apply(this);
   };
 
-  $.extend(Initializer.prototype, {
+  merge(Initializer.prototype, {
 
-    initialize: function(){
-      this.base = this.options.base;
-      this.module = this.base.attr(this.options.module);
-      this.action = this.base.attr(this.options.action);
+    initialize: function(options){
+
+      this.base = $(this.options.base);
+
+      this.set_module_action("module");
+      this.set_module_action("action");
+
       this.application = this.options.modules;
 
-      if (this.module === undefined || this.action === undefined || this.application === undefined) {
-        return false;
+      $(document.body).ready(proxy(this.setup, this));
+    },
+
+    set_module_action : function(name) {
+      var value = this.base.attr("data-" + name);
+      if (typeof value !== "string" || value === "") {
+        throw name + " was not set";
       }
-
-      if (this.module) { this.module = this.module.toLowerCase(); }
-      if (this.action) { this.action = this.action.toLowerCase(); }
-
-      $(document.body).ready($.proxy(this.setup, this));
+      this[name] = value.toLowerCase();
     },
 
     setup: function() {
@@ -96,44 +116,6 @@
 
   });
 
-  
-  // BigBird Simple State Machine
-  // ----------------------------
-
-  BigBird.StateMachine = function(collection){
-    this.o = $({});
-
-    if (collection) {
-      this.addCollection(collection);
-    }
-  };
-
-  BigBird.StateMachine.prototype = {
-
-    publish : function(){
-      this.o.trigger.apply( this.o, arguments );
-    },
-
-    subscribe : function(){
-      this.o.bind.apply( this.o, arguments );
-    },
-
-    addCollection: function(items) {
-      $.each(items, $.proxy(function(item){
-        this.add(item);
-      }, this));
-    },
-
-    add: function(item) {
-      this.subscribe("change", function(e, current_item){
-        return (current_item === item) ? item.activate() : item.deactivate();
-      });
-
-      item.active = $.proxy(function(){ this.publish("change", item); }, this);
-    }
-  };
-
-  
   // BigBird Module
   // --------------
 
@@ -148,7 +130,11 @@
     this.initialize.apply(this, arguments);
   };
 
-  $.extend(Module.prototype, {
+  merge(Module.prototype, {
+
+    merge : merge,
+
+    proxy : proxy,
 
     // Establish references to the pub /sub methods for convienience
     publish : $.publish,
@@ -164,13 +150,12 @@
     // Allows for short hand selectors like `this.$('a')`
     $: function(selector) {
       if (this.$el === null) { return; }
-
       return this.$el.find(selector);
     },
 
-    
+
     // Takes an array of functions `['foo', 'bar']`
-    // and uses `$.proxy` to retain lexical scope for each.
+    // and uses `this.proxy` to retain lexical scope for each.
     // this means you can call these later without fear of losing scope
     // especially useful in callbacks from events like `.bind(event, this.function)`
     proxyFunctions: function() {
@@ -178,7 +163,7 @@
       for (len; len--;) {
         var methodName = this.proxied[len];
         if (typeof this[methodName] === "function") {
-          this[methodName] = $.proxy(this[methodName], this);
+          this[methodName] = this.proxy(this[methodName], this);
         }
       }
     },
@@ -189,7 +174,7 @@
     subscribeToEvents: function() {
       for (var key in this.subscriptions) {
         var methodName = this.subscriptions[key];
-        this.subscribe(key, $.proxy(this[methodName], this));
+        this.subscribe(key, this.proxy(this[methodName], this));
       }
     },
 
@@ -211,13 +196,13 @@
 
       for (var key in this.events) {
         var methodName = this.events[key];
-        var method     = $.proxy(this[methodName], this);
+        var method     = this.proxy(this[methodName], this);
 
         var match      = key.match(this.eventSplitter);
         var eventName  = match[1], selector = match[2];
 
         if (selector === '') {
-          this.$el.bind(eventName, method);
+          this.$el.on(eventName, method);
         } else {
           this.$el.delegate(selector, eventName, method);
         }
@@ -284,7 +269,7 @@
     }
 
     // Add static properties to the constructor function, if supplied.
-    $.extend(child, parent, staticProps);
+    merge(child, parent, staticProps);
 
     // Set the prototype chain to inherit from `parent`, without calling
     // `parent`'s constructor function.
@@ -294,7 +279,7 @@
 
     // Add prototype properties (instance properties) to the subclass,
     // if supplied.
-    if (protoProps) { $.extend(child.prototype, protoProps); }
+    if (protoProps) { merge(child.prototype, protoProps); }
 
     // Set a convenience property in case the parent's prototype is needed
     // later.
