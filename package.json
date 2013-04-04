@@ -8,7 +8,8 @@
     "grunt": "0.4.1",
     "grunt-rigger": "0.4.0",
     "grunt-contrib-jasmine": "0.4.1",
-    "phantomjs" : "1.8.2-0"
+    "phantomjs" : "1.8.2-0",
+    "grunt-cli": "0.1.6"
   },
   "scripts": {
   	"test": "grunt travis --verbose"
