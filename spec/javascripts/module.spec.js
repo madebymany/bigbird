@@ -144,4 +144,42 @@ describe("BigBird.Module", function() {
     });
   });
 
+  describe("merge", function(){
+    var result;
+    var merge = BigBird.Module.prototype.merge;
+    it("can extend an object with the attributes of another", function() {
+      expect(merge({}, {a:'b'}).a).toEqual('b');
+    });
+    it("properties in source override destination", function() {
+      expect(merge({a:'x'}, {a:'b'}).a).toEqual('b');
+    });
+    it("properties not in source don't get overriden", function() {
+      expect(merge({x:'x'}, {a:'b'}).x).toEqual('x');
+    });
+    it("can extend from multiple source objects", function() {
+      result = merge({x:'x'}, {a:'a'}, {b:'b'});
+      expect(result).toEqual({x:'x', a:'a', b:'b'});
+    });
+    it("extending from multiple source objects last property trumps", function() {
+      result = merge({x:'x'}, {a:'a', x:2}, {a:'b'});
+      expect(result).toEqual({x:2, a:'b'});
+    });
+
+    it("should not error on `null` or `undefined` sources", function() {
+      result = {};
+      merge(result, null, undefined, {a:1});
+      expect(result.a).toEqual(1);
+    });
+  });
+
+  describe("proxy", function(){
+    var proxy = BigBird.Module.prototype.proxy;
+    var context = {name : 'ninjabiscuit'};
+    var func = function(arg) { return "name: " + (this.name || arg); };
+    var bound = proxy(func, context);
+    it("can bind a function to a context", function(){
+      expect(bound()).toEqual('name: ninjabiscuit');
+    });
+  });
+
 });
