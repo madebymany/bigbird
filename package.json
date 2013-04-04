@@ -1,7 +1,7 @@
 {
   "name": "BigBird",
   "version": "0.1.0",
-  "devDependencies": {
+  "dependencies": {
     "grunt-contrib-jshint": "~0.2.0",
     "grunt-contrib-uglify": "~0.1.2",
     "grunt-contrib-watch": "~0.3.1",
