@@ -1,7 +1,12 @@
+var set_base = function() {
+  return $("<div data-module='test' data-action='index' />");
+};
+
 describe("BigBird.Initializer", function() {
 
   it("Should find the appropriate methods on the application object using the execute function", function(){
-    var base = $("<div data-module='test' data-action='index' />");
+
+    var base = set_base();
 
     var o = {
       'Test' : {

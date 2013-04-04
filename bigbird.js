@@ -1,5 +1,7 @@
 (function() {
 
+  "use strict";
+
   // Initial setup
   // -------------
 
@@ -32,6 +34,12 @@
     return obj;
   };
 
+  var proxy = function(fn, context){
+    return function(){
+      return fn.apply(context, arguments);
+    };
+  };
+
   // BigBird Initializer
   // -------------------
 
@@ -40,32 +48,35 @@
   // and action to load.
 
   var InitializerDefaults = {
-    module: "data-module",
-    action: "data-action",
+    base : document.body,
     modules: {}
   };
 
   var Initializer = BigBird.Initializer = function(options) {
-    this.options = merge({}, InitializerDefaults, options);
-    this.initialize.apply(this, arguments);
+    this.options = merge(InitializerDefaults, options);
+    this.initialize.apply(this);
   };
 
   merge(Initializer.prototype, {
 
-    initialize: function(){
+    initialize: function(options){
 
-      this.module = document.body.getAttribute(this.options.module);
-      this.action = document.body.getAttribute(this.options.action);
+      this.base = $(this.options.base);
+
+      this.set_module_action("module");
+      this.set_module_action("action");
+
       this.application = this.options.modules;
 
-      if (this.module === undefined || this.action === undefined || this.application === undefined) {
-        return false;
+      $(document.body).ready(proxy(this.setup, this));
+    },
+
+    set_module_action : function(name) {
+      var value = this.base.attr("data-" + name);
+      if (typeof value !== "string" || value === "") {
+        throw name + " was not set";
       }
-
-      if (this.module) { this.module = this.module.toLowerCase(); }
-      if (this.action) { this.action = this.action.toLowerCase(); }
-
-      $(document.body).ready(this.proxy(this.setup, this));
+      this[name] = value.toLowerCase();
     },
 
     setup: function() {
@@ -162,11 +173,7 @@
 
     merge : merge,
 
-    proxy : function(fn, context){
-      return function(){
-        return fn.apply(context, arguments);
-      };
-    },
+    proxy : proxy,
 
     // Establish references to the pub /sub methods for convienience
     publish : $.publish,
@@ -182,7 +189,6 @@
     // Allows for short hand selectors like `this.$('a')`
     $: function(selector) {
       if (this.$el === null) { return; }
-
       return this.$el.find(selector);
     },
 

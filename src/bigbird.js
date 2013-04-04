@@ -54,12 +54,14 @@
 
   var Initializer = BigBird.Initializer = function(options) {
     this.options = merge(InitializerDefaults, options);
-    this.initialize.apply(this, arguments);
+    this.initialize.apply(this);
   };
 
   merge(Initializer.prototype, {
 
-    initialize: function(){
+    initialize: function(options){
+
+      this.base = $(this.options.base);
 
       this.set_module_action("module");
       this.set_module_action("action");
@@ -70,11 +72,11 @@
     },
 
     set_module_action : function(name) {
-      var value = this.base.getAttribute("data-" + name);
+      var value = this.base.attr("data-" + name);
       if (typeof value !== "string" || value === "") {
         throw name + " was not set";
       }
-      this[name] = value;
+      this[name] = value.toLowerCase();
     },
 
     setup: function() {
@@ -187,7 +189,6 @@
     // Allows for short hand selectors like `this.$('a')`
     $: function(selector) {
       if (this.$el === null) { return; }
-
       return this.$el.find(selector);
     },
 
