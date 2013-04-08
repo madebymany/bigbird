@@ -1,16 +1,21 @@
-# Big Bird 
+# Big Bird
 
 [![Build Status](https://travis-ci.org/madebymany/bigbird.png?branch=master)](https://travis-ci.org/madebymany/bigbird/)
 
-Big Bird is a JavaScript framework of sorts that's designed to help you write more maintainable, modular JavaScript. It fits perfectly when you don't need a full blown MVC framework like [Backbone](http://backbgonejs.org) or [Ember](http://emberjs.com). Big Bird is suited to situations where you are rendering on the server-side but need to progressively enhance your application with a sprinkling of JS magic and you're fed up with writing monolithic jQuery functions that are difficult to maintain. 
+Big Bird is a JavaScript framework of sorts that's designed to help you write more maintainable, modular JavaScript. It fits perfectly when you don't need a full blown MVC framework like [Backbone](http://backbgonejs.org) or [Ember](http://emberjs.com). Big Bird is suited to situations where you are rendering on the server-side but need to progressively enhance your application with a sprinkling of JS magic and you're fed up with writing monolithic jQuery functions that are difficult to maintain.
 
 ## Getting started
 
-We have an [example carousel](https://github.com/madebymany/bigbird/tree/master/examples/carousel/) written with Big Bird to give you a good starting point. It's heavily commented to show you some of the functionality of Big Bird. 
+We have an [example carousel](https://github.com/madebymany/bigbird/tree/master/examples/carousel/) written with Big Bird to give you a good starting point. It's heavily commented to show you some of the functionality of Big Bird.
 
 The [source code](https://github.com/madebymany/bigbird/tree/master/bigbird.js) is also heavily commented, and there are a full suite of tests which help to illustrate the functionality provided.
 
 ## Change log
+
+**0.2.0**
+- Tidied up initializer
+- More compatible with other DOM libraries (although still relies on Tiny Pub Sub)
+- Bower registered
 
 **0.1.1**
 - Refactoring controllers and views into one class called ``Module``.
@@ -23,7 +28,7 @@ The [source code](https://github.com/madebymany/bigbird/tree/master/bigbird.js) 
 
 ## Contributing
 
-Big Bird is built with [grunt](https://github.com/gruntjs/grunt). Please make sure you have [npm](https://npmjs.org/) installed to get up and running. 
+Big Bird is built with [grunt](https://github.com/gruntjs/grunt). Please make sure you have [npm](https://npmjs.org/) installed to get up and running.
 
 1. Fork it, pull it down.
 2. Run `npm install` to get the grunt modules required.
