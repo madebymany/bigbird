@@ -1,10 +1,13 @@
 {
   "name": "BigBird",
   "version": "0.2.0",
+  "main": "bigbird.js",
   "ignore": [
     "**/.*",
     "node_modules",
-    "components"
+    "components",
+    "spec",
+    "public"
   ],
   "dependencies": {}
 }
