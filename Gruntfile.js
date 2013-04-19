@@ -9,7 +9,7 @@ module.exports = function(grunt) {
   grunt.initConfig({
 
     meta: {
-      version: '0.2.1',
+      version: '0.2.2',
       banner: '// Big Bird\n// v<%= meta.version %>\n// by @cjbell88, @ninjabiscuit & @callumj_ all from @madebymany'
     },
 
