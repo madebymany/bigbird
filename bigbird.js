@@ -13,32 +13,8 @@
   // Use jQuery (our only dependency)
   var $ = window.jQuery || window.Zepto || window.ender || window.$;
 
-  // Tiny Pub / Sub
-  // Copyright (c) 2011 "Cowboy" Ben Alman; Licensed MIT, GPL
-  var o = $({});
-  $.subscribe = function() { o.on.apply(o, arguments); };
-  $.unsubscribe = function() { o.off.apply(o, arguments); };
-  $.publish = function() { o.trigger.apply(o, arguments); };
-
-  var merge = function(obj) {
-    var source;
-    for (var len = arguments.length, i = 1; i < len; i++) {
-      source = arguments[i];
-      if (!source) { continue; }
-      for (var key in source) {
-        if (source.hasOwnProperty(key)) {
-          obj[key] = source[key];
-        }
-      }
-    }
-    return obj;
-  };
-
-  var proxy = function(fn, context){
-    return function(){
-      return fn.apply(context, arguments);
-    };
-  };
+  // BigBird.Events extends eventable
+  BigBird.Events = _.extend({}, Eventable);
 
   // BigBird Initializer
   // -------------------
@@ -53,11 +29,11 @@
   };
 
   var Initializer = BigBird.Initializer = function(options) {
-    this.options = merge(InitializerDefaults, options);
+    this.options = _.extend(InitializerDefaults, options);
     this.initialize.apply(this);
   };
 
-  merge(Initializer.prototype, {
+  _.extend(Initializer.prototype, {
 
     initialize: function(options){
 
@@ -68,7 +44,7 @@
 
       this.application = this.options.modules;
 
-      $(document.body).ready(proxy(this.setup, this));
+      $(document.body).ready(_.bind(this.setup, this));
     },
 
     set_module_action : function(name) {
@@ -130,15 +106,15 @@
     this.initialize.apply(this, arguments);
   };
 
-  merge(Module.prototype, {
+  _.extend(Module.prototype, BigBird.Events, {
 
-    merge : merge,
+    merge : _.extend,
 
-    proxy : proxy,
+    proxy : _.bind,
 
     // Establish references to the pub /sub methods for convienience
-    publish : $.publish,
-    subscribe : $.subscribe,
+    publish : _.bind(BigBird.Events.trigger, BigBird.Events),
+    subscribe : _.bind(BigBird.Events.on, BigBird.Events),
 
     $el: null,
 
@@ -174,7 +150,7 @@
     subscribeToEvents: function() {
       for (var key in this.subscriptions) {
         var methodName = this.subscriptions[key];
-        this.subscribe(key, this.proxy(this[methodName], this));
+        this.subscribe(key, this[methodName], this);
       }
     },
 
@@ -269,7 +245,7 @@
     }
 
     // Add static properties to the constructor function, if supplied.
-    merge(child, parent, staticProps);
+    _.extend(child, parent, staticProps);
 
     // Set the prototype chain to inherit from `parent`, without calling
     // `parent`'s constructor function.
@@ -279,7 +255,7 @@
 
     // Add prototype properties (instance properties) to the subclass,
     // if supplied.
-    if (protoProps) { merge(child.prototype, protoProps); }
+    if (protoProps) { _.extend(child.prototype, protoProps); }
 
     // Set a convenience property in case the parent's prototype is needed
     // later.
