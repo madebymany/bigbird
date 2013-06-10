@@ -12,6 +12,8 @@
 #
 src_files:
     - public/javascripts/ender-min.js
+    - components/underscore/underscore.js
+    - components/Eventable/eventable.js
     - bigbird.js
 # stylesheets
 #

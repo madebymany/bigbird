@@ -8,10 +8,12 @@
 
     <div id="element">Our element</div>
 
-    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+    <script type="text/javascript" src="../public/javascripts/jquery-1.9.1.js"></script>
+    <script type="text/javascript" src="../components/underscore/underscore.js"></script>
+    <script type="text/javascript" src="../components/Eventable/eventable.js"></script>
     <script type="text/javascript" src="../bigbird.js"></script>
     <script type="text/javascript">
-    var TestApp = TestApp || {}; 
+    var TestApp = TestApp || {};
     TestApp.Modules = TestApp.Modules || {};
 
     TestApp.Modules.Common = {
@@ -48,7 +50,7 @@
     });
 
     new BigBird.Initializer({ modules: TestApp.Modules });
-    
+
     </script>
-  </body>  
+  </body>
 </html>
