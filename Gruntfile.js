@@ -15,7 +15,12 @@ module.exports = function(grunt) {
 
     'jasmine' : {
       'bigbird' : {
-        src : ['public/javascripts/*.js', 'bigbird.js'],
+        src : [
+          'components/underscore/underscore.js',
+          'components/Eventable/eventable.js',
+          'public/javascripts/jquery-1.9.1.js',
+          'bigbird.js'
+        ],
         options : {
           specs : 'spec/**/*.spec.js',
           helpers : 'spec/javascripts/helpers/*.js',

@@ -1,4 +1,4 @@
-!function(global, $, BigBird) {
+;(function(global, $, BigBird) {
   'use strict';
 
   // Define the carousel status module.
@@ -17,9 +17,9 @@
     // The element we're going to use to display our status message
     el: $('#status-message'),
 
-    updateStatusMessage: function(e, status_message) {
+    updateStatusMessage: function(status_message) {
       this.$el.text(status_message);
     }
   });
 
-}(this, jQuery, BigBird);
+})(this, jQuery, BigBird);

@@ -10,5 +10,8 @@
     "public",
     "src"
   ],
-  "dependencies": {}
+  "dependencies": {
+    "Eventable" : "1.0.1",
+    "underscore" : "1.4.4"
+  }
 }

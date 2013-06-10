@@ -29,7 +29,7 @@ describe("BigBird.Module", function() {
     var moduleInstance = new m();
 
     it("can subscribe to events", function(){
-      $.publish("/test");
+      BigBird.Events.trigger("/test");
       expect(moduleInstance.i).toBe(1);
     });
   });
