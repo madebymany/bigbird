@@ -8,7 +8,7 @@
   var BigBird = window.BigBird = {};
 
   // Current version of BigBird
-  BigBird.VERSION = '0.2.2';
+  BigBird.VERSION = '0.3.0';
 
   // Use jQuery (our only dependency)
   var $ = window.jQuery || window.Zepto || window.ender || window.$;

@@ -12,6 +12,10 @@ The [source code](https://github.com/madebymany/bigbird/tree/master/bigbird.js) 
 
 ## Change log
 
+**0.3.0**
+- Added underscore and eventable as dependencies
+- Removed tiny pub sub in favour of eventable
+
 **0.2.0**
 - Tidied up initializer
 - More compatible with other DOM libraries (although still relies on Tiny Pub Sub)
