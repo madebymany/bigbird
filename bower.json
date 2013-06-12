@@ -11,7 +11,7 @@
     "src"
   ],
   "dependencies": {
-    "Eventable" : "1.0.1",
-    "underscore" : "1.4.4"
+    "Eventable" : "git://github.com/madebymany/eventable.git",
+    "underscore" : "git://github.com/components/underscore.git#1.4.4"
   }
 }
