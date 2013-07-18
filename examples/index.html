@@ -28,6 +28,7 @@
       },
       index: function(){
         new SimpleModule();
+        new TemplateModule();
         console.log('Index on test called');
       }
     };
@@ -41,6 +42,22 @@
 
       initialize: function() {
         console.log('SimpleModule init');
+      },
+
+      handleElementClick: function(){
+        console.log('Clicked!');
+      }
+
+    });
+
+    var template = "<h1 data-bb-el='heading'><%= heading %></h1>";
+
+    var TemplateModule = BigBird.Module.extend({
+      el: $('#element'),
+
+      initialize: function() {
+        this.renderTemplate(_.template(template, { heading: "Test" }));
+        console.log(this.$els.heading);
       },
 
       handleElementClick: function(){

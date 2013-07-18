@@ -215,6 +215,19 @@
       }
     },
 
+    renderTemplate: function(compiledHtml) {
+      this.$el.append(compiledHtml);
+
+      var els = {};
+
+      this.$el.find('[data-bb-el]').each(function(index, element){
+        element = $(element);
+        els[element.attr('data-bb-el')] = element;
+      });
+
+      this.$els = els;
+    },
+
     _setOptions: function(options) {
       this.options = options;
       for (var key in this.options) {
