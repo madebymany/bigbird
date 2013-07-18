@@ -12,6 +12,9 @@ The [source code](https://github.com/madebymany/bigbird/tree/master/bigbird.js) 
 
 ## Change log
 
+**0.3.2**
+- Added ``setElements`` method to dynamically assign ``data-bb-el="blah"`` elements in a template into a ``this.$els`` object
+
 **0.3.0**
 - Added underscore and eventable as dependencies
 - Removed tiny pub sub in favour of eventable
