@@ -2,4 +2,6 @@
 .DS_Store
 node_modules
 .rvmrc
+.grunt/
+_SpecRunner.html
 components
