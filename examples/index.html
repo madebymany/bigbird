@@ -28,6 +28,7 @@
       },
       index: function(){
         new SimpleModule();
+        new TemplateModule();
         console.log('Index on test called');
       }
     };
@@ -45,6 +46,25 @@
 
       handleElementClick: function(){
         console.log('Clicked!');
+      }
+
+    });
+
+    var template = "<h1 data-bb-el='heading'><%= heading %></h1>";
+
+    var TemplateModule = BigBird.Module.extend({
+
+      el: $('#element'),
+
+      initialize: function() {
+        var html = this.setElements(_.template(template, { heading: "Test" }));
+        console.log(this.$els.heading);
+        this.$els.heading.on('mouseover', this.handleMouseover);
+        this.$el.append(html);
+      },
+
+      handleMouseover: function(){
+        console.log('Heading mouseover!');
       }
 
     });

@@ -8,7 +8,7 @@
   var BigBird = window.BigBird = {};
 
   // Current version of BigBird
-  BigBird.VERSION = '0.3.1';
+  BigBird.VERSION = '0.3.2';
 
   // Use jQuery (our only dependency)
   var $ = window.jQuery || window.Zepto || window.ender || window.$;
@@ -200,6 +200,9 @@
 
       this.$el = this.el instanceof $ ? this.el : $(this.el);
       this.el = this.$el[0];
+
+      this.$els = this.els = {};
+
       this.data = this.$el.data();
     },
 
@@ -213,6 +216,20 @@
         var target = (selector === '') ? this.$el : this.$el.find(selector);
         target.unbind(eventName);
       }
+    },
+
+    setElements: function(compiledHtml) {
+      var $html = $("<div>").html(compiledHtml);
+      _.each($html.find('[data-bb-el]'), _.bind(this._setBBElement, this));
+      return $html.unwrap();
+    },
+
+    _setBBElement: function(element) {
+      var $element = $(element),
+          name = $element.attr('data-bb-el');
+
+      this.els[name] = element;
+      this.$els[name] = $element;
     },
 
     _setOptions: function(options) {
