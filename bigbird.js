@@ -200,6 +200,9 @@
 
       this.$el = this.el instanceof $ ? this.el : $(this.el);
       this.el = this.$el[0];
+
+      this.$els = this.els = {};
+
       this.data = this.$el.data();
     },
 
@@ -215,17 +218,18 @@
       }
     },
 
-    renderTemplate: function(compiledHtml) {
-      this.$el.append(compiledHtml);
+    setElements: function(compiledHtml) {
+      var $html = $("<div>").html(compiledHtml);
+      _.each($html.find('[data-bb-el]'), _.bind(this._getBBElement, this));
+      return $html.html();
+    },
 
-      var els = {};
+    _getBBElement: function(element) {
+      var $element = $(element),
+          name = $element.attr('data-bb-el');
 
-      this.$el.find('[data-bb-el]').each(function(index, element){
-        element = $(element);
-        els[element.attr('data-bb-el')] = element;
-      });
-
-      this.$els = els;
+      this.els[name] = element;
+      this.$els[name] = $element;
     },
 
     _setOptions: function(options) {

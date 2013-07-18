@@ -56,8 +56,9 @@
       el: $('#element'),
 
       initialize: function() {
-        this.renderTemplate(_.template(template, { heading: "Test" }));
+        var html = this.setElements(_.template(template, { heading: "Test" }));
         console.log(this.$els.heading);
+        this.$el.append(html);
       },
 
       handleElementClick: function(){
