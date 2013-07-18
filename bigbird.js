@@ -220,11 +220,11 @@
 
     setElements: function(compiledHtml) {
       var $html = $("<div>").html(compiledHtml);
-      _.each($html.find('[data-bb-el]'), _.bind(this._getBBElement, this));
-      return $html.html();
+      _.each($html.find('[data-bb-el]'), _.bind(this._setBBElement, this));
+      return $html.unwrap();
     },
 
-    _getBBElement: function(element) {
+    _setBBElement: function(element) {
       var $element = $(element),
           name = $element.attr('data-bb-el');
 
