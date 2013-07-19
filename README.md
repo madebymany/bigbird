@@ -13,6 +13,10 @@ The [source code](https://github.com/madebymany/bigbird/tree/master/bigbird.js) 
 ## Change log
 
 **0.3.2**
+- ``setElements`` now uses this.$el to search for ``data-bb-el`` elements
+- ``this.$els`` and ``this.els`` are now functions that accept a `name` and an optional `force` parameter to re-cache the element
+
+**0.3.2**
 - Added ``setElements`` method to dynamically assign ``data-bb-el="blah"`` elements in a template into a ``this.$els`` object
 
 **0.3.0**

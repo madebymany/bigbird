@@ -1,6 +1,6 @@
 {
   "name": "BigBird",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "dependencies": {
     "grunt": "0.4.1",
     "grunt-cli": "0.1.6",

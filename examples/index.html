@@ -66,6 +66,7 @@
         console.log(this.$els("heading").text()); // Will still be 'Hey!'
         console.log(this.$els("heading", true).text()); // Will now be 'Test' as we forced a re-cache
         console.log(this.els("nothing")); // undefined
+        console.log(this.$els("nothing")); // empty jquery array []
 
         this.$els("subheading").remove();
 
