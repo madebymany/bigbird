@@ -57,10 +57,10 @@
       el: $('#element'),
 
       initialize: function() {
-        var html = this.setElements(_.template(template, { heading: "Test" }));
-        console.log(this.$els.heading);
-        this.$els.heading.on('mouseover', this.handleMouseover);
-        this.$el.append(html);
+        this.$el.append(_.template(template, { heading: "Test" }));
+        // this.setElements();
+        console.log(this.$els("heading"));
+        this.$els("heading").on('mouseover', this.handleMouseover);
       },
 
       handleMouseover: function(){

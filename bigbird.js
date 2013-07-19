@@ -201,7 +201,7 @@
       this.$el = this.el instanceof $ ? this.el : $(this.el);
       this.el = this.$el[0];
 
-      this.$els = this.els = {};
+      this._$els = this._els = {};
 
       this.data = this.$el.data();
     },
@@ -218,18 +218,38 @@
       }
     },
 
-    setElements: function(compiledHtml) {
-      var $html = $("<div>").html(compiledHtml);
-      _.each($html.find('[data-bb-el]'), _.bind(this._setBBElement, this));
-      return $html.unwrap();
+    setElements: function() {
+      _.each(this.$el.find('[data-bb-el]'), _.bind(this._setBBElement, this));
+    },
+
+    $els: function(name) {
+      return this._getBBElement(this._$els, name);
+    },
+
+    els: function(name) {
+      var el = this._getBBElement(this._els, name);
+      return (el.length) ? el[0] : el;
+    },
+
+    _getBBElement: function(cache, name) {
+      var el;
+
+      if (!_.isUndefined(cache[name])) {
+        el = cache[name];
+      } else {
+        el = this.$el.find('[data-bb-el="'+ name +'"]');
+        if (el.length) { this._setBBElement(el); }
+      }
+
+      return el;
     },
 
     _setBBElement: function(element) {
-      var $element = $(element),
+      var $element = element instanceof $ ? element : $(element),
           name = $element.attr('data-bb-el');
 
-      this.els[name] = element;
-      this.$els[name] = $element;
+      this._els[name] = $element[0];
+      this._$els[name] = $element;
     },
 
     _setOptions: function(options) {
