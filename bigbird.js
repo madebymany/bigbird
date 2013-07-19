@@ -201,7 +201,7 @@
       this.$el = this.el instanceof $ ? this.el : $(this.el);
       this.el = this.$el[0];
 
-      this._$els = this._els = {};
+      this._$els = {};
 
       this.data = this.$el.data();
     },
@@ -222,34 +222,30 @@
       _.each(this.$el.find('[data-bb-el]'), _.bind(this._setBBElement, this));
     },
 
-    $els: function(name) {
-      return this._getBBElement(this._$els, name);
+    $els: function(name, force) {
+      return this._getBBElement(name, force || false);
     },
 
-    els: function(name) {
-      var el = this._getBBElement(this._els, name);
-      return (el.length) ? el[0] : el;
+    els: function(name, force) {
+      return this._getBBElement(name, force || false)[0];
     },
 
-    _getBBElement: function(cache, name) {
+    _getBBElement: function(name, force) {
       var el;
 
-      if (!_.isUndefined(cache[name])) {
-        el = cache[name];
+      if (!_.isUndefined(this._$els[name]) && !force) {
+        el = this._$els[name];
       } else {
         el = this.$el.find('[data-bb-el="'+ name +'"]');
-        if (el.length) { this._setBBElement(el); }
+        this._setBBElement(el);
       }
 
       return el;
     },
 
     _setBBElement: function(element) {
-      var $element = element instanceof $ ? element : $(element),
-          name = $element.attr('data-bb-el');
-
-      this._els[name] = $element[0];
-      this._$els[name] = $element;
+      var $element = element instanceof $ ? element : $(element);
+      this._$els[$element.attr('data-bb-el')] = $element;
     },
 
     _setOptions: function(options) {
