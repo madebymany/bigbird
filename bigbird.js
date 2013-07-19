@@ -8,7 +8,7 @@
   var BigBird = window.BigBird = {};
 
   // Current version of BigBird
-  BigBird.VERSION = '0.3.2';
+  BigBird.VERSION = '0.3.3';
 
   // Use jQuery (our only dependency)
   var $ = window.jQuery || window.Zepto || window.ender || window.$;
@@ -201,7 +201,7 @@
       this.$el = this.el instanceof $ ? this.el : $(this.el);
       this.el = this.$el[0];
 
-      this.$els = this.els = {};
+      this._$els = {};
 
       this.data = this.$el.data();
     },
@@ -218,18 +218,34 @@
       }
     },
 
-    setElements: function(compiledHtml) {
-      var $html = $("<div>").html(compiledHtml);
-      _.each($html.find('[data-bb-el]'), _.bind(this._setBBElement, this));
-      return $html.unwrap();
+    setElements: function() {
+      _.each(this.$el.find('[data-bb-el]'), _.bind(this._setBBElement, this));
+    },
+
+    $els: function(name, force) {
+      return this._getBBElement(name, force || false);
+    },
+
+    els: function(name, force) {
+      return this._getBBElement(name, force || false)[0];
+    },
+
+    _getBBElement: function(name, force) {
+      var el;
+
+      if (!_.isUndefined(this._$els[name]) && !force) {
+        el = this._$els[name];
+      } else {
+        el = this.$el.find('[data-bb-el="'+ name +'"]');
+        this._setBBElement(el);
+      }
+
+      return el;
     },
 
     _setBBElement: function(element) {
-      var $element = $(element),
-          name = $element.attr('data-bb-el');
-
-      this.els[name] = element;
-      this.$els[name] = $element;
+      var $element = element instanceof $ ? element : $(element);
+      this._$els[$element.attr('data-bb-el')] = $element;
     },
 
     _setOptions: function(options) {

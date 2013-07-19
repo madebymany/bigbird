@@ -57,10 +57,20 @@
       el: $('#element'),
 
       initialize: function() {
-        var html = this.setElements(_.template(template, { heading: "Test" }));
-        console.log(this.$els.heading);
-        this.$els.heading.on('mouseover', this.handleMouseover);
-        this.$el.append(html);
+        this.$el.append("<h1 data-bb-el='heading'>Hey!</h1>");
+        console.log(this.$els("heading"));
+
+        this.$el.html(_.template(template, { heading: "Test" }));
+
+
+        console.log(this.$els("heading").text()); // Will still be 'Hey!'
+        console.log(this.$els("heading", true).text()); // Will now be 'Test' as we forced a re-cache
+        console.log(this.els("nothing")); // undefined
+        console.log(this.$els("nothing")); // empty jquery array []
+
+        this.$els("subheading").remove();
+
+        this.$els("heading").on('mouseover', this.handleMouseover);
       },
 
       handleMouseover: function(){
