@@ -9,9 +9,8 @@
 
   BigBird.VERSION = "0.3.3";
 
-  var $ = window.jQuery || window.Zepto || window.ender || window.$;
-
   BigBird.Events = _.extend({}, Eventable);
+
 
   // BigBird Initializer
   // -------------------
@@ -79,13 +78,18 @@
 
   });
 
+
   // BigBird Module
   // --------------
 
   var Module = BigBird.Module = function(options) {
-    this._setOptions(options || {});
+    this.options = options;
 
-    if (this.el) { this.setElement(this.el); }
+    _.each(options, function(v, option) {
+      this[option] = v;
+    }, this);
+
+    if (this.el) { this.setElement(); }
     if (this.subscriptions) { this.subscribeToEvents(); }
     if (this.events) { this.delegateEvents(); }
     if (this.proxied) { this.proxyFunctions(); }
@@ -93,88 +97,83 @@
     this.initialize.apply(this, arguments);
   };
 
+  Module.extend = extend;
+
   _.extend(Module.prototype, BigBird.Events, {
 
     publish: _.bind(BigBird.Events.trigger, BigBird.Events),
     subscribe: _.bind(BigBird.Events.on, BigBird.Events),
 
     $el: null,
-    eventSplitter: /^(\S+)\s*(.*)$/,
+    _$els: {},
 
-    initialize: function() {},
+    initialize: function() {
+    },
 
     $: function(selector) {
-      if (this.$el) {
-        return this.$el.find(selector);
-      }
+      return this.$el.find(selector);
     },
 
     proxyFunctions: function() {
-      var len = this.proxied.length;
-      for (len; len--;) {
-        var methodName = this.proxied[len];
-        if (typeof this[methodName] === "function") {
-          this[methodName] = _.bind(this[methodName], this);
-        }
-      }
+      _.each(this.proxied, function(method) {
+        this[method] = _.bind(this[method], this);
+      }, this);
     },
 
     subscribeToEvents: function() {
-      for (var key in this.subscriptions) {
-        var methodName = this.subscriptions[key];
-        this.subscribe(key, this[methodName], this);
-      }
+      _.each(this.subscriptions, function(method, name) {
+        this.subscribe(name, this[method], this);
+      }, this);
     },
 
     delegateEvents: function() {
-      if (this.$el === null) { return; }
+      var method;
+      var evt;
 
-      for (var key in this.events) {
-        var methodName = this.events[key];
-        var method     = _.bind(this[methodName], this);
+      _.each(this.events, function(m, e) {
+        method = _.bind(this[m], this);
+        evt = splitEvent(e);
 
-        var match      = key.match(this.eventSplitter);
-        var eventName  = match[1], selector = match[2];
-
-        if (selector === "") {
-          this.$el.on(eventName, method);
-        } else {
-          this.$el.delegate(selector, eventName, method);
+        if (evt.selector) {
+          this.$el.on(evt.kind, evt.selector, method);
+          return;
         }
-      }
-    },
 
-    setElement: function(element) {
-      this.el = element || this.el;
-
-      this.$el = this.el instanceof $ ? this.el : $(this.el);
-      this.el = this.$el[0];
-
-      this._$els = {};
-
-      this.data = this.$el.data();
+        this.$el.on(evt.kind, method);
+      }, this);
     },
 
     destroy: function() {
-      for (var key in this.events) {
-        var match = key.match(this.eventSplitter);
-        var eventName = match[1], selector = match[2];
+      var target = this.$el;
+      var evt;
 
-        var target = (selector === "") ? this.$el : this.$el.find(selector);
-        target.unbind(eventName);
-      }
+      _.each(this.events, function(m, e) {
+        evt = splitEvent(e);
+
+        if (evt.selector) {
+          target = this.$(evt.selector);
+        }
+
+        target.unbind(evt.kind);
+      }, this);
+    },
+
+    setElement: function(element) {
+      this.$el = $(element || this.el);
+      this.el = this.$el[0];
+      this.data = this.$el.data();
     },
 
     setElements: function() {
-      _.each(this.$el.find("[data-bb-el]"), _.bind(this._setBBElement, this));
-    },
-
-    $els: function(name, force) {
-      return this._getBBElement(name, force || false);
+      _.each(this.$("[data-bb-el]"), this._setBBElement, this);
     },
 
     els: function(name, force) {
       return this._getBBElement(name, force || false)[0];
+    },
+
+    $els: function(name, force) {
+      return this._getBBElement(name, force || false);
     },
 
     _getBBElement: function(name, force) {
@@ -183,7 +182,7 @@
       if (!_.isUndefined(this._$els[name]) && !force) {
         el = this._$els[name];
       } else {
-        el = this.$el.find("[data-bb-el=" + name + "]");
+        el = this.$("[data-bb-el=" + name + "]");
         this._setBBElement(el);
       }
 
@@ -193,20 +192,15 @@
     _setBBElement: function(element) {
       var $element = element instanceof $ ? element : $(element);
       this._$els[$element.attr("data-bb-el")] = $element;
-    },
-
-    _setOptions: function(options) {
-      this.options = options;
-      for (var key in this.options) {
-        this[key] = this.options[key];
-      }
     }
+
   });
+
 
   // Helpers
   // -------
 
-  var extend = function(protoProps, staticProps) {
+  function extend(protoProps, staticProps) {
     var parent = this;
     var child;
 
@@ -229,15 +223,22 @@
     child.__super__ = parent.prototype;
 
     return child;
-  };
+  }
+
+  function splitEvent(evt) {
+    var match = evt.match(/^(\S+)\s*(.*)$/);
+    return {
+      "kind": match[1],
+      "selector": match[2]
+    }
+  }
 
   function capitalise(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
   }
 
-  Module.extend = extend;
-
   if (typeof define === "function" && define.amd) {
     define("bigbird", [], function() { return BigBird; });
   }
+
 })();
