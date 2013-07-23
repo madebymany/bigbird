@@ -7,21 +7,14 @@
 
   var BigBird = window.BigBird = {};
 
-  // Current version of BigBird
   BigBird.VERSION = '0.3.3';
 
-  // Use jQuery (our only dependency)
   var $ = window.jQuery || window.Zepto || window.ender || window.$;
 
-  // BigBird.Events extends eventable
   BigBird.Events = _.extend({}, Eventable);
 
   // BigBird Initializer
   // -------------------
-
-  // Some basic defaults for the initializer. Using the body
-  // and the data-module and data-action to select which module
-  // and action to load.
 
   var InitializerDefaults = {
     base : document.body,
@@ -112,28 +105,18 @@
 
     proxy : _.bind,
 
-    // Establish references to the pub /sub methods for convienience
     publish : _.bind(BigBird.Events.trigger, BigBird.Events),
     subscribe : _.bind(BigBird.Events.on, BigBird.Events),
 
     $el: null,
 
-    // Initialize is an empty function by default. Override it with your own
-    // initialization logic.
     initialize: function() {},
 
-    // Scoped jQuery dom finds to the `$el`.
-    // Allows for short hand selectors like `this.$('a')`
     $: function(selector) {
       if (this.$el === null) { return; }
       return this.$el.find(selector);
     },
 
-
-    // Takes an array of functions `['foo', 'bar']`
-    // and uses `this.proxy` to retain lexical scope for each.
-    // this means you can call these later without fear of losing scope
-    // especially useful in callbacks from events like `.bind(event, this.function)`
     proxyFunctions: function() {
       var len = this.proxied.length;
       for (len; len--;) {
@@ -144,9 +127,6 @@
       }
     },
 
-    // Set subscriptions with event and function pairs. `{ "/test": "testMethod" }`
-    // methods are bound to the Module, so should correspond
-    // to methods that you have defined.
     subscribeToEvents: function() {
       for (var key in this.subscriptions) {
         var methodName = this.subscriptions[key];
@@ -154,19 +134,6 @@
       }
     },
 
-    // Set callbacks, where `this.events` is a hash of
-    //
-    // *{"event selector": "callback"}*
-    //
-    //     {
-    //       'mousedown .title':  'edit',
-    //       'click .button':     'save'
-    //       'click .open':       function(e) { ... }
-    //     }
-    //
-    // pairs. Callbacks will be bound to the view, with `this` set properly.
-    // Uses event delegation for efficiency.
-    // Omitting the selector binds the event to `this.el`.
     delegateEvents: function() {
       if (this.$el === null) { return; }
 
@@ -259,54 +226,35 @@
   // Helpers
   // -------
 
-  // Helper function to correctly set up the prototype chain, for subclasses.
-  // Similar to `goog.inherits`, but uses a hash of prototype properties and
-  // class properties to be extended.
-  // From Backbone JS: https://github.com/documentcloud/backbone/blob/master/backbone.js
-
   var extend = function(protoProps, staticProps) {
     var parent = this;
     var child;
 
-    // The constructor function for the new subclass is either defined by you
-    // (the "constructor" property in your `extend` definition), or defaulted
-    // by us to simply call the parent's constructor.
     if (protoProps && protoProps.hasOwnProperty('constructor')) {
       child = protoProps.constructor;
     } else {
       child = function(){ parent.apply(this, arguments); };
     }
 
-    // Add static properties to the constructor function, if supplied.
     _.extend(child, parent, staticProps);
 
-    // Set the prototype chain to inherit from `parent`, without calling
-    // `parent`'s constructor function.
     var Surrogate = function(){ this.constructor = child; };
     Surrogate.prototype = parent.prototype;
     child.prototype = new Surrogate();
 
-    // Add prototype properties (instance properties) to the subclass,
-    // if supplied.
     if (protoProps) { _.extend(child.prototype, protoProps); }
 
-    // Set a convenience property in case the parent's prototype is needed
-    // later.
     child.__super__ = parent.prototype;
 
     return child;
   };
 
-  // Capitilises the first letter of a string
-  // Used within the Initialiser to make it case insensitive.
   function capitaliseFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
   }
 
-  // Setup inheritence for the Module, so we can do BigBird.Module.extend({})
   Module.extend = extend;
 
-  // Setup BigBird as a module, if require is available
   if (typeof define !== "undefined" && typeof define === "function" && define.amd) {
     define( "bigbird", [], function () { return BigBird; } );
   }
