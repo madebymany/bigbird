@@ -23,7 +23,7 @@
 
   _.extend(Initializer.prototype, {
 
-    initialize: function(options){
+    initialize: function(options) {
       this.base = this.options.base;
       this.application = this.options.modules;
       this.module = this.base.data("module");
@@ -145,7 +145,8 @@
     },
 
     setElement: function(el) {
-      this.$el = $element(el || this.el);
+      var element = el || this.el;
+      this.$el = element instanceof $ ? element : $(element);
       this.el = this.$el[0];
       this.data = this.$el.data();
     },
@@ -163,20 +164,17 @@
     },
 
     _getBBElement: function(name, force) {
-      var element;
+      var element = this._$els[name];
 
-      if (!_.isUndefined(this._$els[name]) && !force) {
-        element = this._$els[name];
-      } else {
+      if (force || _.isUndefined(element)) {
         element = this.$("[data-bb-el=" + name + "]");
-        this._setBBElement(el);
+        this._setBBElement(element);
       }
 
       return element;
     },
 
-    _setBBElement: function(el) {
-      var $el = $element(el);
+    _setBBElement: function($el) {
       this._$els[$el.data("bbEl")] = $el;
     }
 
@@ -219,15 +217,11 @@
     }
   }
 
-  function capitalise(string) {
-    return string.charAt(0).toUpperCase() + string.slice(1);
+  function capitalise(str) {
+    return str.charAt(0).toUpperCase() + str.slice(1);
   }
 
-  function $element(el) {
-    return el instanceof $ ? el : $(el);
-  }
-
-  if (typeof define === "function" && define.amd) {
+  if (_.isFunction(window.define) && define.amd) {
     define("bigbird", [], function() {
       return BigBird;
     });
