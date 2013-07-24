@@ -144,8 +144,8 @@
       }, this);
     },
 
-    setElement: function(element) {
-      this.$el = $(element || this.el);
+    setElement: function(el) {
+      this.$el = $element(el || this.el);
       this.el = this.$el[0];
       this.data = this.$el.data();
     },
@@ -175,9 +175,9 @@
       return element;
     },
 
-    _setBBElement: function(element) {
-      var $element = $(element);
-      this._$els[$element.data("bbEl")] = $element;
+    _setBBElement: function(el) {
+      var $el = $element(el);
+      this._$els[$el.data("bbEl")] = $el;
     }
 
   });
@@ -221,6 +221,10 @@
 
   function capitalise(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
+  }
+
+  function $element(el) {
+    return el instanceof $ ? el : $(el);
   }
 
   if (typeof define === "function" && define.amd) {
