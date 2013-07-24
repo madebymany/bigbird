@@ -2,46 +2,34 @@
 
   "use strict";
 
-  // Initial setup
-  // -------------
-
   var BigBird = window.BigBird = {};
+  var $body = $(document.body);
 
   BigBird.VERSION = "0.3.3";
-
   BigBird.Events = _.extend({}, Eventable);
 
 
-  // BigBird Initializer
-  // -------------------
-
-  var initializerDefaults = {
-    base: document.body,
-    modules: {}
-  };
+  // Initializer
+  // -----------
 
   var Initializer = BigBird.Initializer = function(options) {
-    this.options = _.extend(initializerDefaults, options);
+    this.options = _.extend({
+      base: $body,
+      modules: {}
+    }, options);
+
     this.initialize.apply(this);
   };
 
   _.extend(Initializer.prototype, {
 
     initialize: function(options){
-      this.base = $(this.options.base);
-      this.setModuleAction("module");
-      this.setModuleAction("action");
+      this.base = this.options.base;
       this.application = this.options.modules;
+      this.module = this.base.data("module");
+      this.action = this.base.data("action");
 
-      $(document.body).ready(_.bind(this.setup, this));
-    },
-
-    setModuleAction: function(name) {
-      var value = this.base.attr("data-" + name);
-      if (typeof value !== "string" || value === "") {
-        throw name + " was not set";
-      }
-      this[name] = value.toLowerCase();
+      $body.ready(_.bind(this.setup, this));
     },
 
     setup: function() {
@@ -51,36 +39,34 @@
     },
 
     rerunAction: function() {
-      return this.execute(this.module, this.action);
+      this.execute(this.module, this.action);
     },
 
-    execute: function(module, action) {
-      module = this.getModule(module);
-      if (module === undefined) { return false; }
+    execute: function(moduleName, actionName) {
+      var app = this.application;
+      var module;
+      var action;
 
-      if (module[action] === undefined || typeof module[action] !== "function") { return false; }
-
-      module[action].apply();
-    },
-
-    getModule: function(moduleName) {
-      if (this.application.hasOwnProperty(moduleName)) {
-        return this.application[moduleName];
+      if (!moduleName || !actionName) {
+        return;
       }
 
-      moduleName = capitalise(moduleName);
-      if (this.application.hasOwnProperty(moduleName)) {
-        return this.application[moduleName];
+      module = app[moduleName] || app[capitalise(moduleName)];
+      if (_.isUndefined(module)) {
+        return;
       }
 
-      return undefined;
+      action = module[actionName];
+      if (_.isFunction(action)) {
+        return action();
+      }
     }
 
   });
 
 
-  // BigBird Module
-  // --------------
+  // Module
+  // ------
 
   var Module = BigBird.Module = function(options) {
     this.options = options;
@@ -104,7 +90,7 @@
     publish: _.bind(BigBird.Events.trigger, BigBird.Events),
     subscribe: _.bind(BigBird.Events.on, BigBird.Events),
 
-    $el: null,
+    $el: $body,
     _$els: {},
 
     initialize: function() {
@@ -154,7 +140,7 @@
           target = this.$(evt.selector);
         }
 
-        target.unbind(evt.kind);
+        target.off(evt.kind);
       }, this);
     },
 
@@ -169,29 +155,29 @@
     },
 
     els: function(name, force) {
-      return this._getBBElement(name, force || false)[0];
+      return this._getBBElement(name, !!force)[0];
     },
 
     $els: function(name, force) {
-      return this._getBBElement(name, force || false);
+      return this._getBBElement(name, !!force);
     },
 
     _getBBElement: function(name, force) {
-      var el;
+      var element;
 
       if (!_.isUndefined(this._$els[name]) && !force) {
-        el = this._$els[name];
+        element = this._$els[name];
       } else {
-        el = this.$("[data-bb-el=" + name + "]");
+        element = this.$("[data-bb-el=" + name + "]");
         this._setBBElement(el);
       }
 
-      return el;
+      return element;
     },
 
     _setBBElement: function(element) {
-      var $element = element instanceof $ ? element : $(element);
-      this._$els[$element.attr("data-bb-el")] = $element;
+      var $element = $(element);
+      this._$els[$element.data("bbEl")] = $element;
     }
 
   });
@@ -207,7 +193,7 @@
     if (protoProps && protoProps.hasOwnProperty("constructor")) {
       child = protoProps.constructor;
     } else {
-      child = function(){ parent.apply(this, arguments); };
+      child = function() { parent.apply(this, arguments); };
     }
 
     _.extend(child, parent, staticProps);
@@ -238,7 +224,9 @@
   }
 
   if (typeof define === "function" && define.amd) {
-    define("bigbird", [], function() { return BigBird; });
+    define("bigbird", [], function() {
+      return BigBird;
+    });
   }
 
 })();

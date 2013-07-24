@@ -70,7 +70,7 @@ describe("BigBird.Initializer", function() {
 
     var b = new BigBird.Initializer({ base: base });
 
-    expect(b.module).toBe("test");
+    expect(b.module).toBe("Test");
     expect(b.action).toBe("index");
   });
 
@@ -94,7 +94,9 @@ describe("BigBird.Initializer", function() {
   it("Should be case insensitive for the module name", function(){
     var o = {
       'Test': {
-        index: function() {}
+        index: function() {
+          return true;
+        }
       }
     };
 
@@ -102,8 +104,8 @@ describe("BigBird.Initializer", function() {
     var b = new BigBird.Initializer({ base: base, modules: o });
 
     expect(b.module).toBe("test");
-    expect(b.getModule("Test")).toBeDefined();
-    expect(b.getModule("test")).toBeDefined();
+    expect(b.execute("Test", "index")).toBeTruthy();
+    expect(b.execute("test", "index")).toBeTruthy();
   });
 
 });
