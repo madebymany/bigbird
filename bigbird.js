@@ -13,37 +13,26 @@
   // -----------
 
   var Initializer = BigBird.Initializer = function(options) {
-    this.options = _.extend({
-      base: $body,
-      modules: {}
+    var $base = options.base || $body;
+
+    _.extend(this, {
+      modules: {},
+      module: $base.data("module"),
+      action: $base.data("action")
     }, options);
 
-    this.initialize.apply(this);
+    $body.ready(_.bind(this.initialize, this));
   };
 
   _.extend(Initializer.prototype, {
 
-    initialize: function(options) {
-      this.base = this.options.base;
-      this.application = this.options.modules;
-      this.module = this.base.data("module");
-      this.action = this.base.data("action");
-
-      $body.ready(_.bind(this.setup, this));
-    },
-
-    setup: function() {
+    initialize: function() {
       this.execute("common", "initialize");
       this.execute(this.module, "initialize");
       this.execute(this.module, this.action);
     },
 
-    rerunAction: function() {
-      this.execute(this.module, this.action);
-    },
-
     execute: function(moduleName, actionName) {
-      var app = this.application;
       var module;
       var action;
 
@@ -51,15 +40,21 @@
         return;
       }
 
-      module = app[moduleName] || app[capitalise(moduleName)];
+      module = this.modules[moduleName] ||
+               this.modules[capitalise(moduleName)];
       if (_.isUndefined(module)) {
         return;
       }
 
-      action = module[actionName];
+      action = module[actionName] ||
+               module[capitalise(actionName)];
       if (_.isFunction(action)) {
-        return action();
+        action();
       }
+    },
+
+    rerunAction: function() {
+      this.execute(this.module, this.action);
     }
 
   });
