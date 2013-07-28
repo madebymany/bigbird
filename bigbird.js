@@ -9,6 +9,47 @@
   BigBird.Events = _.extend({}, Eventable);
 
 
+  // Helpers
+  // -------
+
+  function extend(protoProps, staticProps) {
+    var parent = this;
+    var child;
+
+    if (protoProps && protoProps.hasOwnProperty("constructor")) {
+      child = protoProps.constructor;
+    } else {
+      child = function() { parent.apply(this, arguments); };
+    }
+
+    _.extend(child, parent, staticProps);
+
+    var Surrogate = function() { this.constructor = child; };
+    Surrogate.prototype = parent.prototype;
+    child.prototype = new Surrogate();
+
+    if (protoProps) {
+      _.extend(child.prototype, protoProps);
+    }
+
+    child.__super__ = parent.prototype;
+
+    return child;
+  }
+
+  function splitEvent(evt) {
+    var match = evt.match(/^(\S+)\s*(.*)$/);
+    return {
+      kind: match[1],
+      selector: match[2]
+    };
+  }
+
+  function capitalise(str) {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+  }
+
+
   // Initializer
   // -----------
 
@@ -174,47 +215,6 @@
     }
 
   });
-
-
-  // Helpers
-  // -------
-
-  function extend(protoProps, staticProps) {
-    var parent = this;
-    var child;
-
-    if (protoProps && protoProps.hasOwnProperty("constructor")) {
-      child = protoProps.constructor;
-    } else {
-      child = function() { parent.apply(this, arguments); };
-    }
-
-    _.extend(child, parent, staticProps);
-
-    var Surrogate = function() { this.constructor = child; };
-    Surrogate.prototype = parent.prototype;
-    child.prototype = new Surrogate();
-
-    if (protoProps) {
-      _.extend(child.prototype, protoProps);
-    }
-
-    child.__super__ = parent.prototype;
-
-    return child;
-  }
-
-  function splitEvent(evt) {
-    var match = evt.match(/^(\S+)\s*(.*)$/);
-    return {
-      "kind": match[1],
-      "selector": match[2]
-    }
-  }
-
-  function capitalise(str) {
-    return str.charAt(0).toUpperCase() + str.slice(1);
-  }
 
   if (_.isFunction(window.define) && define.amd) {
     define("bigbird", [], function() {
