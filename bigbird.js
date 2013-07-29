@@ -105,18 +105,14 @@
   // ------
 
   var Module = BigBird.Module = function(options) {
-    this.options = options;
-
-    _.each(options, function(v, option) {
-      this[option] = v;
-    }, this);
+    _.extend(this, options);
 
     if (this.el) { this.setElement(); }
+    if (this.proxied) { this.proxyMethods(); }
+    if (this.events) { this.attachEvents(); }
     if (this.subscriptions) { this.subscribeToEvents(); }
-    if (this.events) { this.delegateEvents(); }
-    if (this.proxied) { this.proxyFunctions(); }
 
-    this.initialize.apply(this, arguments);
+    this.initialize.call(this);
   };
 
   Module.extend = extend;
@@ -132,23 +128,11 @@
     initialize: function() {
     },
 
-    $: function(selector) {
-      return this.$el.find(selector);
+    proxyMethods: function() {
+      _.bindAll.apply(null, _.union(this, this.proxied));
     },
 
-    proxyFunctions: function() {
-      _.each(this.proxied, function(method) {
-        this[method] = _.bind(this[method], this);
-      }, this);
-    },
-
-    subscribeToEvents: function() {
-      _.each(this.subscriptions, function(method, name) {
-        this.subscribe(name, this[method], this);
-      }, this);
-    },
-
-    delegateEvents: function() {
+    attachEvents: function() {
       var method;
       var evt;
 
@@ -165,18 +149,9 @@
       }, this);
     },
 
-    destroy: function() {
-      var target = this.$el;
-      var evt;
-
-      _.each(this.events, function(m, e) {
-        evt = splitEvent(e);
-
-        if (evt.selector) {
-          target = this.$(evt.selector);
-        }
-
-        target.off(evt.kind);
+    subscribeToEvents: function() {
+      _.each(this.subscriptions, function(method, name) {
+        this.subscribe(name, this[method], this);
       }, this);
     },
 
@@ -197,6 +172,25 @@
 
     $els: function(name, force) {
       return this._getBBElement(name, !!force);
+    },
+
+    $: function(selector) {
+      return this.$el.find(selector);
+    },
+
+    destroy: function() {
+      var target = this.$el;
+      var evt;
+
+      _.each(this.events, function(m, e) {
+        evt = splitEvent(e);
+
+        if (evt.selector) {
+          target = this.$(evt.selector);
+        }
+
+        target.off(evt.kind);
+      }, this);
     },
 
     _getBBElement: function(name, force) {

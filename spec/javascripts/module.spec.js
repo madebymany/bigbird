@@ -1,166 +1,105 @@
-describe("BigBird.Module", function() {
+describe("Big Bird module", function() {
 
-  describe(".setOptions", function(){
-    var m = BigBird.Module.extend();
-    var moduleInstance = new m({ test: true, testFunction: function(){ this.test = false; } });
+  var module;
+  var cls;
 
-    it("sets options as variables on the object", function(){
-      expect(moduleInstance.test).toBe(true);
+  beforeEach(function() {
+    module = BigBird.Module.extend({
+      el: $("<div />").append($("<div class=someElement />")),
+      proxied: ["someMethod"],
+      events: {
+        "click": "someMethod",
+        "click .someElement": "someMethod"
+      },
+      subscriptions: { "someEvent": "someMethod" },
+      someMethod: function() {}
     });
 
-    it("allows custom functions to be set", function(){
-      expect(moduleInstance.testFunction).not.toBeUndefined();
-    });
-
-    it("allows custom functions to be called", function(){
-      moduleInstance.testFunction();
-      expect(moduleInstance.test).toBe(false);
-    });
+    cls = new module();
   });
 
-  describe(".subscribeToEvents", function() {
-    var m = BigBird.Module.extend({
-      i: 0,
-      subscriptions: { "/test" : "runTest" },
-      runTest: function() {
-        this.i = 1;
-      }
+  describe("constructor", function() {
+
+    it("sets options", function() {
+      cls.constructor({ someOption: true });
+      expect(cls.someOption).toBeDefined();
     });
-    var moduleInstance = new m();
 
-    it("can subscribe to events", function(){
-      BigBird.Events.trigger("/test");
-      expect(moduleInstance.i).toBe(1);
+    it("calls setup methods", function() {
+      spyOn(cls, "setElement");
+      spyOn(cls, "proxyMethods");
+      spyOn(cls, "attachEvents");
+      spyOn(cls, "subscribeToEvents");
+      cls.constructor();
+      expect(cls.setElement).toHaveBeenCalled();
+      expect(cls.proxyMethods).toHaveBeenCalled();
+      expect(cls.attachEvents).toHaveBeenCalled();
+      expect(cls.subscribeToEvents).toHaveBeenCalled();
     });
-  });
 
-  describe(".proxyFunctions", function() {
-    var element = $("<div id='el'></div>");
-
-    var m = BigBird.Module.extend({
-      i: 0,
-      proxied: [ "test" ],
-
-      initialize: function() { element.bind('click', this.test); },
-      test: function() { this.i = 1; }
-    });
-    m = new m();
-
-    it("should allow a proxied function to retain lexical scope", function() {
-      element.click();
-      expect(m.i).toBe(1);
+    it("calls initialize", function() {
+      spyOn(cls, "initialize");
+      cls.constructor();
+      expect(cls.initialize).toHaveBeenCalled();
     });
 
   });
 
-  describe(".setElement", function() {
-    var element = $("<div id='el'></div>"),
-        m = BigBird.Module.extend({ el: element }),
-        moduleInstance = new m();
+  describe("proxyMethods", function() {
 
-    it("has a jQuery object with .$el", function() {
-      expect(moduleInstance.$el).toBe(jQuery);
+    it("binds methods to the context of the module", function() {
+      function maskContext(callback) {
+        return callback();
+      };
+
+      cls.someOtherMethod = function() {
+        return this;
+      };
+
+      expect(maskContext(cls.someOtherMethod)).not.toBe(cls);
+      cls.proxied.push("someOtherMethod");
+      cls.proxyMethods();
+      expect(maskContext(cls.someOtherMethod)).toBe(cls);
     });
 
-    it("has a plain dom object with .el", function() {
-      expect(moduleInstance.el).not.toBeNull();
-    });
-
-    it("can set another element at runtime", function(){
-      var other_element = $("<div id='other-element'></div>");
-
-      var original_element = moduleInstance.$el;
-
-      moduleInstance.setElement(other_element);
-      expect(moduleInstance.$el).not.toBe(original_element);
-    });
   });
 
-  describe(".delegateEvents", function() {
-    var element = $("<div id='el'><a href='#' class='btn'></a></div>"),
-        m = BigBird.Module.extend({
-          el: element,
-          i: 0,
-          events: { "click": "elementClickHandler", "click .btn": "buttonClickHandler" },
-          elementClickHandler: function() { this.i = 1; },
-          buttonClickHandler: function() { this.i = 2; return false; }
-        }),
-        moduleInstance = new m();
+  describe("attachEvents", function() {
 
-    it("can have an event with no selector, which defaults to the element", function() {
-      element.click();
-      expect(moduleInstance.i).toBe(1);
+    it("attaches events", function() {
+      expect(cls.$el).not.toHandle("someEvent");
+      cls.events["someEvent"] = "someMethod";
+      cls.attachEvents();
+      expect(cls.$el).toHandle("someEvent");
     });
 
-    it("can have an event with a selector", function() {
-      element.find('.btn').click();
-      expect(moduleInstance.i).toBe(2);
-    });
   });
 
-  describe(".destroy", function() {
-
-    var element, m, moduleInstance;
-
-    beforeEach(function(){
-      element = $("<div id='el'><a href='#' class='btn'></a></div>"),
-      m = BigBird.Module.extend({
-        el: element,
-        i: 0,
-        events: { "click": "elementClickHandler", "click .btn": "buttonClickHandler" },
-        elementClickHandler: function() { this.i = 1; },
-        buttonClickHandler: function() { this.i = 2; return false; }
-      }),
-      moduleInstance = new m();
-
-      moduleInstance.destroy();
-    });
-
-    it("should unbind events on the base element", function() {
-      element.click();
-      expect(moduleInstance.i).toBe(0);
-    });
-
-    it("should unbind events on the child element", function() {
-      element.find('.btn').click();
-      expect(moduleInstance.i).toBe(0);
-    });
+  describe("subscribeToEvents", function() {
   });
 
-  describe("merge", function(){
-    var result;
-    it("can extend an object with the attributes of another", function() {
-      expect(_.extend({}, {a:'b'}).a).toEqual('b');
-    });
-    it("properties in source override destination", function() {
-      expect(_.extend({a:'x'}, {a:'b'}).a).toEqual('b');
-    });
-    it("properties not in source don't get overriden", function() {
-      expect(_.extend({x:'x'}, {a:'b'}).x).toEqual('x');
-    });
-    it("can extend from multiple source objects", function() {
-      result = _.extend({x:'x'}, {a:'a'}, {b:'b'});
-      expect(result).toEqual({x:'x', a:'a', b:'b'});
-    });
-    it("extending from multiple source objects last property trumps", function() {
-      result = _.extend({x:'x'}, {a:'a', x:2}, {a:'b'});
-      expect(result).toEqual({x:2, a:'b'});
-    });
-
-    it("should not error on `null` or `undefined` sources", function() {
-      result = {};
-      _.extend(result, null, undefined, {a:1});
-      expect(result.a).toEqual(1);
-    });
+  describe("setElement", function() {
   });
 
-  describe("proxy", function(){
-    var context = {name : 'ninjabiscuit'};
-    var func = function(arg) { return "name: " + (this.name || arg); };
-    var bound = _.bind(func, context);
-    it("can bind a function to a context", function(){
-      expect(bound()).toEqual('name: ninjabiscuit');
-    });
+  describe("setElements", function() {
+  });
+
+  describe("els", function() {
+  });
+
+  describe("$els", function() {
+  });
+
+  describe("$", function() {
+  });
+
+  describe("destroy", function() {
+  });
+
+  describe("getBBElement", function() {
+  });
+
+  describe("setBBElement", function() {
   });
 
 });
