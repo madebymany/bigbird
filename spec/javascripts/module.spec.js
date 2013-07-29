@@ -1,21 +1,33 @@
 describe("Big Bird module", function() {
 
-  var module;
   var cls;
 
   beforeEach(function() {
-    module = BigBird.Module.extend({
-      el: $("<div />").append($("<div class=someElement />")),
-      proxied: ["someMethod"],
+    cls = new (BigBird.Module.extend({
+
+      el: $(_.template([
+        "<div class=someElement>",
+        "<div data-bb-el=someOtherElement>Some content</div>",
+        "<div>"
+      ].join(""))()),
+
+      proxied: [
+        "someMethod"
+      ],
+
       events: {
         "click": "someMethod",
-        "click .someElement": "someMethod"
+        "click [data-bb-el=someOtherElement]": "someMethod"
       },
-      subscriptions: { "someEvent": "someMethod" },
-      someMethod: function() {}
-    });
 
-    cls = new module();
+      subscriptions: {
+        "someSubscription": "someMethod"
+      },
+
+      someMethod: function() {
+      }
+
+    }))();
   });
 
   describe("constructor", function() {
@@ -47,9 +59,9 @@ describe("Big Bird module", function() {
 
   describe("proxyMethods", function() {
 
-    it("binds methods to the context of the module", function() {
-      function maskContext(callback) {
-        return callback();
+    it("binds methods within context of the module", function() {
+      function maskContext(fn) {
+        return fn();
       };
 
       cls.someOtherMethod = function() {
@@ -76,9 +88,44 @@ describe("Big Bird module", function() {
   });
 
   describe("subscribeToEvents", function() {
+
+    it("subscribes to events", function() {
+      spyOn(cls, "subscribe");
+      cls.subscriptions["someOtherSubscription"] = "someMethod";
+      cls.subscribeToEvents();
+      expect(cls.subscribe)
+        .toHaveBeenCalledWith("someOtherSubscription", cls.someMethod, cls);
+    });
+
   });
 
   describe("setElement", function() {
+
+    var element, $element;
+
+    beforeEach(function() {
+      element = document.body;
+      $element = $(element);
+    });
+
+    it("takes an element", function() {
+      cls.setElement(element);
+      expect(cls.$el).toBe($(element));
+      expect(cls.el).toBe(element);
+    });
+
+    it("takes a jQuery-wrapped element", function() {
+      cls.setElement($element);
+      expect(cls.$el).toBe($(element));
+      expect(cls.el).toBe(element);
+    });
+
+    it("assigns data attributes", function() {
+      $element.data("someKey", "someValue");
+      cls.setElement($element);
+      expect(cls.data.someKey).toEqual("someValue");
+    });
+
   });
 
   describe("setElements", function() {

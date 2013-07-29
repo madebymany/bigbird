@@ -15,15 +15,15 @@ module.exports = function(grunt) {
 
     jasmine: {
       bigbird: {
-        src: [
-          "components/underscore/underscore.js",
-          "components/Eventable/eventable.js",
-          "public/javascripts/jquery-1.9.1.js",
-          "bigbird.js"
-        ],
+        src: "bigbird.js",
         options: {
           specs: "spec/**/*.spec.js",
           helpers: "spec/javascripts/helpers/*.js",
+          vendor: [
+            "components/underscore/underscore.js",
+            "components/Eventable/eventable.js",
+            "public/javascripts/jquery-1.9.1.js"
+          ],
           phantomjs: {
             "ignore-ssl-errors": true
           }
