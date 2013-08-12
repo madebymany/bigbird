@@ -1,33 +1,38 @@
 describe("Big Bird module", function() {
 
+  var module = BigBird.Module.extend({
+
+    el: $(_.template([
+      "<div class=someElement>",
+      "<div data-bb-el=someOtherElement>Some content</div>",
+      "<div>"
+    ].join(""))()),
+
+    proxied: [
+      "someMethod"
+    ],
+
+    events: {
+      "click": "someMethod",
+      "hover [data-bb-el=someOtherElement]": "someMethod"
+    },
+
+    subscriptions: {
+      "someSubscription": "someMethod"
+    },
+
+    someMethod: function() {
+    },
+
+    someOtherMethod: function() {
+    }
+
+  });
+
   var cls;
 
   beforeEach(function() {
-    cls = new (BigBird.Module.extend({
-
-      el: $(_.template([
-        "<div class=someElement>",
-        "<div data-bb-el=someOtherElement>Some content</div>",
-        "<div>"
-      ].join(""))()),
-
-      proxied: [
-        "someMethod"
-      ],
-
-      events: {
-        "click": "someMethod",
-        "click [data-bb-el=someOtherElement]": "someMethod"
-      },
-
-      subscriptions: {
-        "someSubscription": "someMethod"
-      },
-
-      someMethod: function() {
-      }
-
-    }))();
+    cls = new module();
   });
 
   describe("constructor", function() {
@@ -101,11 +106,18 @@ describe("Big Bird module", function() {
 
   describe("setElement", function() {
 
-    var element, $element;
+    var selector, element, $element;
 
     beforeEach(function() {
-      element = document.body;
-      $element = $(element);
+      selector = "body";
+      element = document.getElementsByTagName(selector);
+      $element = $(selector);
+    });
+
+    it("takes a selector", function() {
+      cls.setElement(selector);
+      expect(cls.$el).toBe($(element));
+      expect(cls.el).toBe(element);
     });
 
     it("takes an element", function() {
@@ -114,7 +126,7 @@ describe("Big Bird module", function() {
       expect(cls.el).toBe(element);
     });
 
-    it("takes a jQuery-wrapped element", function() {
+    it("takes a jQuery element", function() {
       cls.setElement($element);
       expect(cls.$el).toBe($(element));
       expect(cls.el).toBe(element);
@@ -129,24 +141,75 @@ describe("Big Bird module", function() {
   });
 
   describe("setElements", function() {
+
+    it("calls setBBElement for each element", function() {
+      spyOn(cls, "_setBBElement");
+      cls.setElements();
+      expect(cls._setBBElement).toHaveBeenCalled();
+    });
+
   });
 
   describe("els", function() {
+
+    it("returns an element", function() {
+      expect(cls.els("someOtherElement"))
+        .toBe(cls.$el.find("[data-bb-el=someOtherElement]")[0]);
+    });
+
   });
 
   describe("$els", function() {
+
+    it("returns a jQuery element", function() {
+      expect(cls.$els("someOtherElement"))
+        .toBe("[data-bb-el=someOtherElement]");
+    });
+
   });
 
   describe("$", function() {
+
+    it("finds an element within the primary element", function() {
+      expect(cls.$("[data-bb-el=someOtherElement]"))
+        .toBe(cls.$el.find("[data-bb-el=someOtherElement]"));
+    });
+
   });
 
   describe("destroy", function() {
+
+    it("detaches event listeners", function() {
+      expect(cls.$el).toHandle("click");
+      cls.destroy();
+      expect(cls.$el).not.toHandle("click");
+    });
+
+    it("detaches delegate event listeners", function() {
+      expect(cls.$el).toHandle("hover");
+      cls.destroy();
+      expect(cls.$el).not.toHandle("hover");
+    });
+
   });
 
   describe("getBBElement", function() {
+
+    it("returns an element from the cache", function() {
+      cls.setElements();
+      spyOn(cls, "_setBBElement");
+      expect(cls._getBBElement("someOtherElement").length).toBeTruthy();
+      expect(cls._setBBElement).not.toHaveBeenCalled();
+    });
   });
 
   describe("setBBElement", function() {
+
+    it("adds an element to the cache", function() {
+      cls.setElements();
+      expect(_.size(cls._$els)).toEqual(1);
+    });
+
   });
 
 });

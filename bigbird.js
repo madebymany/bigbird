@@ -142,10 +142,9 @@
 
         if (evt.selector) {
           this.$el.on(evt.kind, evt.selector, method);
-          return;
+        } else {
+          this.$el.on(evt.kind, method);
         }
-
-        this.$el.on(evt.kind, method);
       }, this);
     },
 
@@ -179,18 +178,19 @@
     },
 
     destroy: function() {
-      var target = this.$el;
       var evt;
 
       _.each(this.events, function(m, e) {
         evt = splitEvent(e);
 
         if (evt.selector) {
-          target = this.$(evt.selector);
+          this.$el.off(evt.kind, evt.selector);
+        } else {
+          this.$el.off(evt.kind);
         }
-
-        target.off(evt.kind);
       }, this);
+
+      this.$el.remove();
     },
 
     _getBBElement: function(name, force) {
@@ -204,7 +204,8 @@
       return element;
     },
 
-    _setBBElement: function($el) {
+    _setBBElement: function(el) {
+      var $el = $(el);
       this._$els[$el.data("bbEl")] = $el;
     }
 
