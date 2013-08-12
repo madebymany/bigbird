@@ -20,9 +20,9 @@ module.exports = function(grunt) {
           specs: "spec/**/*.spec.js",
           helpers: "spec/javascripts/helpers/*.js",
           vendor: [
-            "components/underscore/underscore.js",
-            "components/Eventable/eventable.js",
-            "public/javascripts/jquery-1.9.1.js"
+            "bower_components/jquery/jquery.js",
+            "bower_components/underscore/underscore.js",
+            "bower_components/Eventable/eventable.js"
           ],
           phantomjs: {
             "ignore-ssl-errors": true

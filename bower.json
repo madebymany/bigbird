@@ -5,13 +5,12 @@
   "ignore": [
     "**/.*",
     "node_modules",
-    "components",
-    "spec",
-    "public",
-    "src"
+    "bower_components",
+    "spec"
   ],
   "dependencies": {
-    "Eventable" : "1.0.2",
-    "underscore" : "git://github.com/components/underscore.git#1.4.4"
+    "jquery": "~1.9.1",
+    "underscore": "~1.5.1",
+    "Eventable": "~1.0.2"
   }
 }

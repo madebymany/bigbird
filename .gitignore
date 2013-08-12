@@ -1,6 +1,4 @@
-.bundle
 .DS_Store
+.grunt
 node_modules
-.rvmrc
-.grunt/
-components
+bower_components
