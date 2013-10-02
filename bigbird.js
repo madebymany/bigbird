@@ -24,7 +24,6 @@
   // and action to load.
 
   var InitializerDefaults = {
-    base : document.body,
     modules: {}
   };
 
@@ -36,19 +35,12 @@
   _.extend(Initializer.prototype, {
 
     initialize: function(options){
-
-      this.base = $(this.options.base);
-
-      this.set_module_action("module");
-      this.set_module_action("action");
-
       this.application = this.options.modules;
-
-      $(document.body).ready(_.bind(this.setup, this));
+      $(document).ready(_.bind(this.setup, this));
     },
 
     set_module_action : function(name) {
-      var value = this.base.attr("data-" + name);
+      var value = document.body.getAttribute("data-" + name);
       if (typeof value !== "string" || value === "") {
         throw name + " was not set";
       }
@@ -56,6 +48,7 @@
     },
 
     setup: function() {
+      _.each(["module", "action"], this.set_module_action, this);
       // Common module execution if it exists
       this.execute("common", "initialize");
       this.execute(this.module, "initialize");
