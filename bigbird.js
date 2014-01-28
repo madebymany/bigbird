@@ -5,7 +5,7 @@
   var BigBird = window.BigBird = {};
   var $body = $(document.body);
 
-  BigBird.VERSION = "0.3.3";
+  BigBird.VERSION = "0.3.4";
   BigBird.Events = _.extend({}, Eventable);
 
 
@@ -211,10 +211,17 @@
 
   });
 
-  if (_.isFunction(window.define) && define.amd) {
-    define("bigbird", [], function() {
+  if (typeof define === "function" && define.amd) {
+    define(function () {
       return BigBird;
     });
+  } else if (typeof exports !== "undefined") {
+    if (typeof module !== "undefined" && module.exports) {
+      exports = module.exports = BigBird;
+    }
+    exports.BigBird = BigBird;
+  } else {
+    window.BigBird = BigBird;
   }
 
 })();
