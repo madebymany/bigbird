@@ -2,7 +2,7 @@
 
   "use strict";
 
-  var BigBird = window.BigBird = {};
+  var BigBird = {};
   var $body = $(document.body);
 
   BigBird.VERSION = "0.3.4";
