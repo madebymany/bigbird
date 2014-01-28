@@ -1,108 +1,91 @@
-describe("BigBird.Initializer", function() {
+describe("Big Bird initializer", function() {
 
-  it("Should find the appropriate methods on the application object using the execute function", function(){
+  var modules = {
+    common: {
+      initialize: function() {}
+    },
+    home: {
+      initialize: function() {},
+      index: function() {}
+    },
+    About: {
+      Index: function() {}
+    }
+  };
 
-    document.body.setAttribute("data-module", 'test');
-    document.body.setAttribute("data-action", 'index');
+  var args = {
+    modules: modules,
+    module: "home",
+    action: "index"
+  };
 
-    var base = document.body;
+  var cls = new BigBird.Initializer(args);
 
-    var o = {
-      'Test' : {
-        initialize: function() {
-          return true;
-        }
-      }
-    };
+  describe("constructor", function() {
 
-    spyOn(o.Test, 'initialize');
+    it("sets modules, module and action", function() {
+      expect(cls.modules).toBe(modules);
+      expect(cls.module).toEqual("home");
+      expect(cls.action).toEqual("index");
+    });
 
-    var b = new BigBird.Initializer({ base: base, modules: o });
+    it("calls initialize when the document is ready", function() {
+      spyOn(cls, "initialize");
+      cls.constructor(args);
+      expect(cls.initialize).toHaveBeenCalled();
+    });
 
-    expect(o.Test.initialize).toHaveBeenCalled();
-    expect(b.execute("Test", "index")).toBeFalsy();
-    expect(b.execute("Common", "initialize")).toBeFalsy();
   });
 
-  it("Should execute the requested action on the module specified as well as the initialize function", function(){
-    var base = $("<div data-module='test' data-action='index' />");
+  describe("initialize", function() {
 
-    var o = {
-      'Test' : { initialize: function() {}, index: function(){} }
-    };
+    it("executes the common module", function() {
+      spyOn(cls, "execute");
+      cls.initialize();
+      expect(cls.execute).toHaveBeenCalledWith("common", "initialize");
+    });
 
-    spyOn(o.Test, 'initialize');
-    spyOn(o.Test, 'index');
+    it("executes the specified module", function() {
+      spyOn(cls, "execute");
+      cls.initialize();
+      expect(cls.execute).toHaveBeenCalledWith("home", "initialize");
+      expect(cls.execute).toHaveBeenCalledWith("home", "index");
+    });
 
-    var b = new BigBird.Initializer({ base: base, modules: o });
-
-    expect(o.Test.initialize).toHaveBeenCalled();
-    expect(o.Test.index).toHaveBeenCalled();
   });
 
-  it("Should find the common object and execute it on DOMready", function() {
-    var base = $("<div data-module='test' data-action='index' />");
+  describe("execute", function() {
 
-    var o = {
-      'Common' : {
-        initialize: function() {}
-      },
-      'Other': {
-        initialize: function(){}
-      }
-    };
+    it("returns if the passed module or action names are falsy", function() {
+      expect(cls.execute(null, undefined)).toBeUndefined();
+    });
 
-    spyOn(o.Common, 'initialize');
+    it("returns if the passed module is undefined", function() {
+      expect(cls.execute("settings", "index")).toBeUndefined();
+    });
 
-    var b = new BigBird.Initializer({ base: base, modules: o });
-    expect(o.Common.initialize).toHaveBeenCalled();
+    it("executes a module", function() {
+      spyOn(cls.modules.home, "index");
+      cls.execute("home", "index");
+      expect(cls.modules.home.index).toHaveBeenCalled();
+    });
+
+    it("executes a module with case insensitivity", function() {
+      spyOn(cls.modules.About, "Index");
+      cls.execute("about", "index")
+      expect(cls.modules.About.Index).toHaveBeenCalled();
+    });
+
   });
 
-  it("Should gracefully fail trying to call execute on functions that don't exist", function(){
-    var o = {};
-    var b = new BigBird.Initializer({ modules: o });
-    expect(b.execute("Common", "initialize")).toBeFalsy();
-  });
+  describe("rerunAction", function() {
 
-  it("Should find the module and action based on what's available on the base tag provided", function() {
-    var base = $("<div data-module='Test' data-action='index' />");
+    it("calls the current action", function() {
+      spyOn(cls.modules.home, "index");
+      cls.rerunAction();
+      expect(cls.modules.home.index).toHaveBeenCalled();
+    });
 
-    var b = new BigBird.Initializer({ base: base });
-
-    expect(b.module).toBe("test");
-    expect(b.action).toBe("index");
-  });
-
-  it("Can rerun an action after initialisation", function() {
-    var base = $("<div data-module='test' data-action='index' />");
-
-    var o = {
-      'Test': {
-        index: function() {}
-      }
-    };
-
-    spyOn(o.Test, 'index');
-
-    var b = new BigBird.Initializer({ base: base, modules: o });
-    b.rerunAction();
-
-    expect(o.Test.index.callCount).toEqual(2);
-  });
-
-  it("Should be case insensitive for the module name", function(){
-    var o = {
-      'Test': {
-        index: function() {}
-      }
-    };
-
-    var base = $("<div data-module='test' data-action='index' />");
-    var b = new BigBird.Initializer({ base: base, modules: o });
-
-    expect(b.module).toBe("test");
-    expect(b.getModule("Test")).toBeDefined();
-    expect(b.getModule("test")).toBeDefined();
   });
 
 });

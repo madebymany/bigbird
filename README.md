@@ -12,7 +12,11 @@ The [source code](https://github.com/madebymany/bigbird/tree/master/bigbird.js) 
 
 ## Change log
 
-**0.3.2**
+**0.3.4**
+- Add CommonJS module support
+- Refactor codebase
+
+**0.3.3**
 - ``setElements`` now uses this.$el to search for ``data-bb-el`` elements
 - ``this.$els`` and ``this.els`` are now functions that accept a `name` and an optional `force` parameter to re-cache the element
 
