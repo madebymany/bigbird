@@ -3,7 +3,6 @@
   "use strict";
 
   var BigBird = {};
-  var $body = $(document.body);
 
   BigBird.VERSION = "0.3.4";
   BigBird.Events = _.extend({}, Eventable);
@@ -54,7 +53,7 @@
   // -----------
 
   var Initializer = BigBird.Initializer = function(options) {
-    var $base = options.base || $body;
+    var $base = options.base || $(document.body);
 
     _.extend(this, {
       modules: {},
@@ -62,7 +61,7 @@
       action: $base.data("action")
     }, options);
 
-    $body.ready(_.bind(this.initialize, this));
+    this.initialize();
   };
 
   _.extend(Initializer.prototype, {
@@ -122,7 +121,7 @@
     publish: _.bind(BigBird.Events.trigger, BigBird.Events),
     subscribe: _.bind(BigBird.Events.on, BigBird.Events),
 
-    $el: $body,
+    $el: null,
     _$els: {},
 
     initialize: function() {
