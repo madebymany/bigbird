@@ -12,6 +12,10 @@ The [source code](https://github.com/madebymany/bigbird/tree/master/bigbird.js) 
 
 ## Change log
 
+**0.3.5**
+- Add proper UMD support
+- Register on NPM
+
 **0.3.4**
 - Add CommonJS module support
 - Refactor codebase
