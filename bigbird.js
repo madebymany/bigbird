@@ -4,7 +4,7 @@
   } else if (typeof exports === "object") {
     module.exports = factory(
       require("underscore"),
-      require("eventable"),
+      require("eventablejs"),
       require("jquery"));
   } else {
     root.BigBird = factory(root._, root.Eventable, root.$);
