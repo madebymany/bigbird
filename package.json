@@ -2,11 +2,6 @@
   "name": "BigBird",
   "version": "0.3.5",
   "license": "MIT",
-  "dependencies": {
-    "grunt": "0.4.1",
-    "grunt-cli": "0.1.6",
-    "grunt-contrib-jasmine": "0.4.2"
-  },
   "contributors": [
     "Callum Jefferies <callum@madebymany.co.uk>",
     "Andrew Walker <andy@madebymany.co.uk>",
@@ -14,6 +9,9 @@
   ],
   "repository": "madebymany/bigbird",
   "devDependencies": {
+    "grunt": "0.4.1",
+    "grunt-cli": "0.1.6",
+    "grunt-contrib-jasmine": "0.4.2",
     "grunt-contrib-jshint": "~0.2.0",
     "grunt-contrib-uglify": "~0.1.2",
     "grunt-contrib-watch": "~0.3.1"
