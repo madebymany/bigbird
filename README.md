@@ -10,7 +10,32 @@ We have an [example carousel](https://github.com/madebymany/bigbird/tree/master/
 
 The [source code](https://github.com/madebymany/bigbird/tree/master/bigbird.js) is also heavily commented, and there are a full suite of tests which help to illustrate the functionality provided.
 
+## Using Big Bird with Browserify
+
+If you're using Browserify and you need an older jQuery than version 2.1, you'll have to shim it:
+
+```
+npm install --save bigbird
+```
+
+If you're using browserify-shim add the following to your `package.json`:
+
+```json
+"browser": {
+  "jquery": "path_to_your_javascripts/jquery.js"
+},
+"browserify-shim": {
+  "jquery": {
+    "exports": "$"
+  }
+}
+```
+
 ## Change log
+
+**0.3.5**
+- Add proper UMD support
+- Register on NPM
 
 **0.3.4**
 - Add CommonJS module support
@@ -51,7 +76,7 @@ Big Bird is built with [grunt](https://github.com/gruntjs/grunt). Please make su
 4. **Run the tests** and build the source using the `grunt` && `grunt jasmine` tasks
 5. Open a pull request, make sure the tests pass.
 
-Big Bird is maintained by [cjbell88](http://github.com/cjbell88), [callum-](http://github.com/callum-) and [ninjabiscuit](http://github.com/ninjabiscuit).
+Big Bird is maintained by [cjbell88](http://github.com/cjbell88), [callum](http://github.com/callum) and [ninjabiscuit](http://github.com/ninjabiscuit).
 
 ## License
 
