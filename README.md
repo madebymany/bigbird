@@ -21,12 +21,14 @@ npm install --save bigbird
 If you're using browserify-shim add the following to your `package.json`:
 
 ```json
-"browser": {
-  "jquery": "path_to_your_javascripts/jquery.js"
-},
-"browserify-shim": {
-  "jquery": {
-    "exports": "$"
+{
+  "browser": {
+    "jquery": "path_to_your_javascripts/jquery.js"
+  },
+  "browserify-shim": {
+    "jquery": {
+      "exports": "$"
+    }
   }
 }
 ```
