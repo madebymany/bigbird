@@ -1,6 +1,7 @@
 {
   "name": "BigBird",
   "version": "0.3.5",
+  "license": "MIT",
   "dependencies": {
     "grunt": "0.4.1",
     "grunt-cli": "0.1.6",
@@ -16,11 +17,6 @@
     "grunt-contrib-jshint": "~0.2.0",
     "grunt-contrib-uglify": "~0.1.2",
     "grunt-contrib-watch": "~0.3.1"
-  },
-  "browser": {
-    "underscore": "bower_components/underscore/underscore.js",
-    "eventable": "bower_components/Eventable/eventable.js",
-    "jquery": "bower_components/jquery/jquery.js"
   },
   "scripts": {
   	"test": "grunt travis --verbose"
