@@ -10,7 +10,7 @@ We have an [example carousel](https://github.com/madebymany/bigbird/tree/master/
 
 The [source code](https://github.com/madebymany/bigbird/tree/master/bigbird.js) is also heavily commented, and there are a full suite of tests which help to illustrate the functionality provided.
 
-## Using BigBird with Browserify
+## Using Big Bird with Browserify
 
 As none of our dependencies are registered on NPM it's necessary to shim them. A quick guide:
 
@@ -85,7 +85,7 @@ Big Bird is built with [grunt](https://github.com/gruntjs/grunt). Please make su
 4. **Run the tests** and build the source using the `grunt` && `grunt jasmine` tasks
 5. Open a pull request, make sure the tests pass.
 
-Big Bird is maintained by [cjbell88](http://github.com/cjbell88), [callum-](http://github.com/callum-) and [ninjabiscuit](http://github.com/ninjabiscuit).
+Big Bird is maintained by [cjbell88](http://github.com/cjbell88), [callum](http://github.com/callum) and [ninjabiscuit](http://github.com/ninjabiscuit).
 
 ## License
 
