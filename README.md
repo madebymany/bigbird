@@ -12,7 +12,7 @@ The [source code](https://github.com/madebymany/bigbird/tree/master/bigbird.js) 
 
 ## Using Big Bird with Browserify
 
-As none of our dependencies are registered on NPM it's necessary to shim them. A quick guide:
+If you're using Browserify and you need an older jQuery than version 2.1, you'll have to shim it:
 
 ```
 npm install --save bigbird
@@ -22,18 +22,9 @@ If you're using browserify-shim add the following to your `package.json`:
 
 ```json
 "browser": {
-  "underscore": "path_to_your_javascripts/underscore.js",
-  "eventable": "path_to_your_javascripts/eventable.js",
   "jquery": "path_to_your_javascripts/jquery.js"
 },
 "browserify-shim": {
-  "underscore": {
-    "exports": "_"
-  },
-  "eventable": {
-    "exports": "Eventable",
-    "depends": "underscore"
-  },
   "jquery": {
     "exports": "$"
   }

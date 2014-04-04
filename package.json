@@ -9,6 +9,11 @@
   ],
   "main": "bigbird.js",
   "repository": "madebymany/bigbird",
+  "dependencies": {
+    "underscore": "~1.5.1",
+    "eventable": "*",
+    "jquery": "~2.1.0"
+  },
   "devDependencies": {
     "grunt": "0.4.1",
     "grunt-cli": "0.1.6",
