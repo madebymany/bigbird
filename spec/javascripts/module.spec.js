@@ -60,6 +60,12 @@ describe("Big Bird module", function() {
       expect(cls.initialize).toHaveBeenCalled();
     });
 
+    it("can pass arguments to initialize from constructor", function() {
+      spyOn(cls, "initialize");
+      cls.constructor("some new thing", 23, "blah");
+      expect(cls.initialize).toHaveBeenCalledWith("some new thing", 23, "blah");
+    });
+
   });
 
   describe("proxyMethods", function() {

@@ -12,5 +12,8 @@
     "jquery": "~1.9.1",
     "underscore": "~1.5.1",
     "Eventable": "~1.0.2"
+  },
+  "resolutions": {
+    "underscore": "1.4.4"
   }
 }

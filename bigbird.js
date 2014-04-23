@@ -122,7 +122,7 @@
     if (this.events) { this.attachEvents(); }
     if (this.subscriptions) { this.subscribeToEvents(); }
 
-    this.initialize.call(this);
+    return this.initialize.apply(this, arguments);
   };
 
   Module.extend = extend;
