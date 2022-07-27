@@ -1,6 +1,6 @@
 {
   "name": "bigbird",
-  "version": "0.3.5",
+  "version": "0.3.6",
   "description": "Big Bird is a JavaScript framework of sorts that's designed to help you write more maintainable, modular JavaScript.",
   "license": "MIT",
   "contributors": [

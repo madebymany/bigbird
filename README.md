@@ -35,6 +35,9 @@ If you're using browserify-shim add the following to your `package.json`:
 
 ## Change log
 
+**0.3.6**
+- Fix AMD import
+
 **0.3.5**
 - Add proper UMD support
 - Register on NPM

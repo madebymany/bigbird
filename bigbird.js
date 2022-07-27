@@ -1,6 +1,6 @@
 (function(root, factory) {
   if (typeof define === "function" && define.amd) {
-    define(["underscore", "eventable", "jquery"], factory);
+    define(["underscore", "eventablejs", "jquery"], factory);
   } else if (typeof exports === "object") {
     module.exports = factory(
       require("underscore"),
