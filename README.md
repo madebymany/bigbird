@@ -35,7 +35,7 @@ If you're using browserify-shim add the following to your `package.json`:
 
 ## Change log
 
-**0.3.6**
+**0.3.6.1**
 - Fix AMD import
 
 **0.3.5**
