@@ -11,7 +11,7 @@
   "main": "bigbird.js",
   "repository": "madebymany/bigbird",
   "dependencies": {
-    "underscore": "~1.5.1",
+    "underscore": "~1.12.1",
     "eventablejs": "~1.0.4",
     "jquery": "~2.1.0"
   },
