@@ -1,3 +1,5 @@
+<!-- @format -->
+
 # Big Bird
 
 [![Build Status](https://travis-ci.org/madebymany/bigbird.png?branch=master)](https://travis-ci.org/madebymany/bigbird/)
@@ -35,40 +37,53 @@ If you're using browserify-shim add the following to your `package.json`:
 
 ## Change log
 
+**0.3.6.2**
+
+- Bump underscore dependency to 1.12.1
+
 **0.3.6.1**
+
 - Fix AMD import
 
 **0.3.5**
+
 - Add proper UMD support
 - Register on NPM
 
 **0.3.4**
+
 - Add CommonJS module support
 - Refactor codebase
 
 **0.3.3**
-- ``setElements`` now uses this.$el to search for ``data-bb-el`` elements
-- ``this.$els`` and ``this.els`` are now functions that accept a `name` and an optional `force` parameter to re-cache the element
+
+- `setElements` now uses this.$el to search for `data-bb-el` elements
+- `this.$els` and `this.els` are now functions that accept a `name` and an optional `force` parameter to re-cache the element
 
 **0.3.2**
-- Added ``setElements`` method to dynamically assign ``data-bb-el="blah"`` elements in a template into a ``this.$els`` object
+
+- Added `setElements` method to dynamically assign `data-bb-el="blah"` elements in a template into a `this.$els` object
 
 **0.3.0**
+
 - Added underscore and eventable as dependencies
 - Removed tiny pub sub in favour of eventable
 
 **0.2.0**
+
 - Tidied up initializer
 - More compatible with other DOM libraries (although still relies on Tiny Pub Sub)
 - Bower registered
 
 **0.1.1**
-- Refactoring controllers and views into one class called ``Module``.
-- Added new ``destroy()`` method for tearing down views to unbind events.
+
+- Refactoring controllers and views into one class called `Module`.
+- Added new `destroy()` method for tearing down views to unbind events.
 - Added a carousel example to help people get started.
 - Heavily commented the source code.
 
 **0.1.0**
+
 - Initial release
 
 ## Contributing
