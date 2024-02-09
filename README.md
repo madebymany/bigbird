@@ -37,6 +37,10 @@ If you're using browserify-shim add the following to your `package.json`:
 
 ## Change log
 
+**0.3.6.3**
+
+- Bump jQuery dependency to 3.5.1
+
 **0.3.6.2**
 
 - Bump underscore dependency to 1.12.1
