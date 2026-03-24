@@ -17,7 +17,7 @@
 
   var BigBird = {};
 
-  BigBird.VERSION = "0.3.6.2";
+  BigBird.VERSION = "0.3.6.4";
   BigBird.Events = _.extend({}, Eventable);
 
   // Helpers
@@ -148,7 +148,7 @@
     initialize: function () {},
 
     proxyMethods: function () {
-      _.bindAll.apply(null, _.union(this, this.proxied));
+      _.bindAll.apply(null, [this].concat(this.proxied));
     },
 
     attachEvents: function () {

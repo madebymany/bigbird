@@ -1,6 +1,6 @@
 {
   "name": "bigbird",
-  "version": "0.3.6",
+  "version": "0.3.6.4",
   "description": "Big Bird is a JavaScript framework of sorts that's designed to help you write more maintainable, modular JavaScript.",
   "license": "MIT",
   "contributors": [
@@ -11,7 +11,7 @@
   "main": "bigbird.js",
   "repository": "madebymany/bigbird",
   "dependencies": {
-    "underscore": "~1.12.1",
+    "underscore": "1.13.8",
     "eventablejs": "~1.0.4",
     "jquery": "~3.5.0"
   },
