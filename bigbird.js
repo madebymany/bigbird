@@ -17,7 +17,7 @@
 
   var BigBird = {};
 
-  BigBird.VERSION = "0.3.6.4";
+  BigBird.VERSION = "0.3.7";
   BigBird.Events = _.extend({}, Eventable);
 
   // Helpers
